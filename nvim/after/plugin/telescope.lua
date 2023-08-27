@@ -21,11 +21,6 @@ require("telescope").setup {
             grouped = true,
             hijack_netrw = true,
             mappings = {
-                ["i"] = {
-                    ["<C-c>"] = function()
-                        vim.cmd("normal vbd")
-                    end,
-                },
                 ["n"] = {
                     -- your custom normal mode mappings
                     ["N"] = fb_actions.create,
@@ -41,8 +36,7 @@ require("telescope").setup {
 
 telescope.load_extension("file_browser")
 
-vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
-vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+vim.keymap.set('n', '<C-p>', builtin.find_files, {})
 vim.keymap.set('n', '<leader>ps', function()
     builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end)

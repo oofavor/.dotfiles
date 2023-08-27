@@ -21,7 +21,6 @@ return require('packer').startup(function(use)
         "folke/trouble.nvim",
         config = function()
             require("trouble").setup {
-                icons = false,
             }
         end
     })
@@ -62,8 +61,8 @@ return require('packer').startup(function(use)
         }
     }
 
-    use("folke/zen-mode.nvim")
     use("github/copilot.vim")
     use("eandrju/cellular-automaton.nvim")
     use 'nvim-tree/nvim-web-devicons'
+    use  'ThePrimeagen/vim-be-good'
 end)
