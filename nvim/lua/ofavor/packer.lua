@@ -17,13 +17,6 @@ return require('packer').startup(function(use)
         end
     })
 
-    use({
-        "folke/trouble.nvim",
-        config = function()
-            require("trouble").setup {
-            }
-        end
-    })
 
     use {
         'nvim-treesitter/nvim-treesitter',
@@ -31,16 +24,18 @@ return require('packer').startup(function(use)
             local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
             ts_update()
         end, }
-    use("nvim-treesitter/playground")
     use("theprimeagen/harpoon")
     use("theprimeagen/refactoring.nvim")
     use("mbbill/undotree")
     use("tpope/vim-fugitive")
     use("nvim-treesitter/nvim-treesitter-context");
 
+    use('nvim-tree/nvim-web-devicons')
+    use("windwp/nvim-autopairs")
+    use("windwp/nvim-ts-autotag")
+
     use {
         'VonHeikemen/lsp-zero.nvim',
-        branch = 'v1.x',
         requires = {
             -- LSP Support
             { 'neovim/nvim-lspconfig' },
@@ -61,8 +56,5 @@ return require('packer').startup(function(use)
         }
     }
 
-    use("github/copilot.vim")
-    use("eandrju/cellular-automaton.nvim")
-    use 'nvim-tree/nvim-web-devicons'
     use  'ThePrimeagen/vim-be-good'
 end)
