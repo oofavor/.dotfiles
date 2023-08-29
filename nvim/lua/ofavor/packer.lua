@@ -31,7 +31,14 @@ return require('packer').startup(function(use)
     use("nvim-treesitter/nvim-treesitter-context");
 
     use('nvim-tree/nvim-web-devicons')
-    use("windwp/nvim-autopairs")
+    use {
+        "windwp/nvim-autopairs",
+        config = function() require("nvim-autopairs").setup {} end
+    }
+    use {
+        "windwp/nvim-ts-autotag",
+        config = function() require("nvim-ts-autotag").setup {} end
+    }
     use("windwp/nvim-ts-autotag")
 
     use {
@@ -56,5 +63,5 @@ return require('packer').startup(function(use)
         }
     }
 
-    use  'ThePrimeagen/vim-be-good'
+    use 'ThePrimeagen/vim-be-good'
 end)

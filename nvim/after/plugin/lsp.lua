@@ -26,7 +26,7 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
         end
     end, { 'i', 's' }),
 
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
     ["<C-Space>"] = cmp.mapping.complete(),
 })
 
