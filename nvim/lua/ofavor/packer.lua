@@ -10,13 +10,14 @@ return require('packer').startup(function(use)
     }
 
     use({
-        'catppuccin/nvim',
         as = 'catppuccin',
-        config = function()
-            vim.cmd('colorscheme catppuccin')
-        end
+        'catppuccin/nvim',
     })
-
+    use({
+        as = 'tokyonight',
+        'folke/tokyonight.nvim',
+    })
+    use { "ellisonleao/gruvbox.nvim" }
 
     use {
         'nvim-treesitter/nvim-treesitter',
@@ -39,7 +40,7 @@ return require('packer').startup(function(use)
         "windwp/nvim-ts-autotag",
         config = function() require("nvim-ts-autotag").setup {} end
     }
-    use("windwp/nvim-ts-autotag")
+    use("jose-elias-alvarez/null-ls.nvim")
 
     use {
         'VonHeikemen/lsp-zero.nvim',

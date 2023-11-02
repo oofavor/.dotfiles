@@ -56,6 +56,7 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
     vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
 
+    vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
 end)
 
 lsp.setup()
