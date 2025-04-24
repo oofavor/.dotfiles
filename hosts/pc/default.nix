@@ -4,15 +4,17 @@
   imports =
     [ 
       ./hardware-configuration.nix
+      ./nvidia.nix
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "nodev";
+  boot.loader.grub.useOSProber = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.efiSupport = true;
 
   networking.hostName = "ofavor"; # Define your hostname.
-
-  # Enable networking
   networking.networkmanager.enable = true;
 
   time.timeZone = "Europe/Moscow";
@@ -29,21 +31,11 @@
     LC_TIME = "ru_RU.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -61,20 +53,21 @@
     ];
   };
 
-  # Install firefox.
-  programs.firefox.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  environment.systemPackages = with pkgs; [
-    git
-    vim 
-    wget
-  ];
 
-  environment.variables.EDITOR = "vim";
+  programs.hyprland = {
+	enable = true;
+	xwayland.enable = true;
+	};
+
+
+environment.systemPackages = with pkgs; [
+waybar
+mako
+];
+
+xdg.portal.enable =true; 
+xdg.portal.extraPortals = with pkgs; [xdg-desktop-portal-gtk];
 
   system.stateVersion = "24.11"; # Did you read the comment?
 }

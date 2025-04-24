@@ -9,6 +9,8 @@
     neofetch
     yazi
     gh
+    hiddify-app
+    firefox
 
     # archives
     zip
@@ -46,7 +48,14 @@
     lm_sensors # for `sensors` command
     pciutils # lspci
     usbutils # lsusb
+
+    neovim
   ];
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    TERMINAL = "ghostty";
+  };
 
   # basic configuration of git, please change to your own
   programs.git = {
@@ -82,7 +91,6 @@
       export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
     '';
 
-    # set some aliases, feel free to add more or remove some
     shellAliases = {
     };
   };
