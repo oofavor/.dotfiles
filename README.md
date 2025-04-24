@@ -1,1 +1,5 @@
-`sudo ln -s ~/.dotfiles/ /etc/nixos`
+# NixOS Config
+### Everything. 
+Dotfiles, configs, packages. 
+All in single repo.
+Thanks to Nix.

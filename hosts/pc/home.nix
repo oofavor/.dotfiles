@@ -50,6 +50,7 @@
     usbutils # lsusb
 
     neovim
+    just
   ];
 
   home.sessionVariables = {
