@@ -12,8 +12,12 @@
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     nixosConfigurations = {
-      pc = nixpkgs.lib.nixosSystem {
+      pc = let
+        username = "ofavor";
+        specialArgs = { inherit username; };
+      in nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        inherit specialArgs;
         modules = [
           ./hosts/pc
           ./hosts/pc/hardware-configuration.nix
@@ -57,4 +61,3 @@
     };
   };
 }
-

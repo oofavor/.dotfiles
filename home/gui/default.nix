@@ -1,0 +1,15 @@
+{ pkgs, config, ... }: {
+
+  imports = [ ./vscode.nix ];
+
+  home.packages = with pkgs; [
+    firefox
+    hiddify-app
+    ghostty
+    rofi-wayland
+    waybar
+    mako
+  ];
+
+  home.sessionVariables = { TERMINAL = "ghostty"; };
+}
