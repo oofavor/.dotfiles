@@ -1,4 +1,4 @@
-# Core packages
+# Base packages
 - nvim
 - tmux
 - fish

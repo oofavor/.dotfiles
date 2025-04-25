@@ -4,7 +4,6 @@
   imports = [
     ./hardware-configuration.nix
     ./../../modules/system.nix
-    ./../../modules/nvidia.nix
     ./../../modules/hypr.nix
     ./../../modules/sound.nix
     ./../../modules/fonts.nix
@@ -14,7 +13,6 @@
   # Bootloader.
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
-  boot.loader.grub.useOSProber = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.efiSupport = true;
 

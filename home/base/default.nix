@@ -1,16 +1,10 @@
 { pkgs, config, ... }: {
   imports = [ ./nvim.nix ];
 
-  home.username = "ofavor";
-  home.homeDirectory = "/home/ofavor";
-
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
-    vim
-    git
     gh
     neofetch
-    yazi
     just
 
     # archives
@@ -36,7 +30,7 @@
   # Basic configuration of git
   programs.git = {
     enable = true;
-    userName = "ofavor";
+    userName = "oofavor";
     userEmail = "favorxog@gmail.com";
   };
 
@@ -50,9 +44,6 @@
       line_break.disabled = true;
     };
   };
-
-  # Shell with good suggestions
-  programs.fish = { enable = true; };
 
   # Editor of choice
   programs.neovim = {

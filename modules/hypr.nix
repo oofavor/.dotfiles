@@ -1,10 +1,14 @@
-{ pkgs, ... }: {
-  services.displayManager.ly.enable = true;
-
-  programs.hyprland = { enable = true; };
+{ pkgs, inputs, ... }: {
+  programs.hyprland = {
+    enable = true;
+    # set the flake package
+    package =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # make sure to also set the portal package, so that they are in sync
+    portalPackage =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+  };
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
 }
