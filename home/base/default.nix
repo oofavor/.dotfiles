@@ -25,7 +25,7 @@
     lm_sensors # for `sensors` command
     pciutils # lspci
     usbutils # lsusb
-    nixfmt
+    nixfmt-rfc-style
     sing-box
     wl-clipboard
   ];

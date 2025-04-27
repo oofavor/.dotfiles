@@ -13,6 +13,6 @@
     gitCredentialHelper = { enable = true; };
   };
 
-  home.packages = with pkgs; [ zig rustc cargo nodejs typescript go gcc ];
+  home.packages = with pkgs; [ zig rustc cargo nodejs typescript go gcc glab ];
 
 }

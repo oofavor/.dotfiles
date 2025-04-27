@@ -17,9 +17,9 @@
         # js/ts
         typescript-language-server
         prettierd
+        tailwindcss-language-server
+
       ];
     };
-
   };
-
 }
