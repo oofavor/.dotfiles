@@ -21,10 +21,12 @@
     glow # markdown previewer in terminal
 
     btop # replacement of htop/nmon
+    powertop
     lm_sensors # for `sensors` command
     pciutils # lspci
     usbutils # lsusb
     nixfmt
+    sing-box
   ];
 
   # Basic configuration of git
@@ -51,6 +53,10 @@
     defaultEditor = true;
   };
 
+  programs.ghostty = {
+  enable = true;
+  settings = {theme =  "tokyonight";};
+  };
   home.stateVersion = "24.11";
 
   programs.home-manager.enable = true;

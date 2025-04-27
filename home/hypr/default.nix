@@ -3,11 +3,10 @@
   imports = [ ./waybar ];
 
   wayland.windowManager.hyprland = {
-    enable = true;
+    enable = false;
     package = null;
     portalPackage = null;
 
-    extraConfig = builtins.readFile ./hyprland.conf;
+    # extraConfig = builtins.readFile ./hyprland.conf;
   };
-
 }

@@ -42,10 +42,16 @@
       };
 
       # TODO
-      laptop = nixpkgs.lib.nixosSystem {
+      laptop = let
+        username = "ofavor";
+        specialArgs = {
+          inherit username;
+          inherit inputs;
+        };
+      in nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./hosts/laptop/configuration.nix
+          ./hosts/laptop
           ./hosts/laptop/hardware-configuration.nix
           home-manager.nixosModules.home-manager
           {

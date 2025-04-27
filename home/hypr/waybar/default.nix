@@ -8,13 +8,12 @@
       height = 5; # Waybar height (to be removed for auto height)
       # Choose the order of the modules
       modules-left = [ "hyprland/workspaces" "hyprland/submap" "custom/media" ];
-      modules-center = [ "hyprland/window" ];
+      # modules-center = [ "hyprland/window" ];
       modules-right = [
         "pulseaudio"
         "network"
         "backlight"
         "battery"
-        "battery#bat2"
         "clock"
         "tray"
       ];
