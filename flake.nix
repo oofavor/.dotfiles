@@ -2,9 +2,10 @@
   description = "My NixOS + Home Manager config for PC, Laptop, and WSL";
 
   nixConfig = {
-    substituters = [ "https://hyprland.cachix.org" ];
-    trusted-public-keys =
-      [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
+    extra-substituters = [ "https://nix-community.cachix.org" ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
   };
 
   inputs = {
@@ -15,7 +16,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hyprland.url = "github:hyprwm/Hyprland";
+    cpu-microcodes = {
+      url =
+        "github:platomav/CPUMicrocodes/ec5200961ecdf78cf00e55d73902683e835edefd";
+      flake = false;
+    };
+    ucodenix = {
+      url = "github:e-tho/ucodenix";
+      inputs.cpu-microcodes.follows = "cpu-microcodes";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
@@ -50,6 +59,7 @@
         };
       in nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        inherit specialArgs;
         modules = [
           ./hosts/laptop
           ./hosts/laptop/hardware-configuration.nix

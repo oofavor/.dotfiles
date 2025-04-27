@@ -3,7 +3,7 @@
   imports = [ ./vscode.nix ];
 
   home.packages = with pkgs; [
-  microsoft-edge
+    firefox
     hiddify-app
     ghostty
     rofi-wayland

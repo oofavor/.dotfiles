@@ -23,7 +23,7 @@ require('lazy').setup({
   require 'ofavor.plugins.blinkcmp',
   require 'ofavor.plugins.theme',
   require 'ofavor.plugins.todo-comments',
-  require 'ofavor.plugins.mini.lua',
+  require 'ofavor.plugins.mini',
   require 'ofavor.plugins.treesitter',
 
 }, {

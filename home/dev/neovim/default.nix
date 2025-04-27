@@ -7,8 +7,17 @@
       plugins = with pkgs.vimPlugins; [
         telescope-fzf-native-nvim
         nvim-treesitter.withAllGrammars
+        blink-cmp
       ];
-      extraPackages = with pkgs; [ lua-language-server stylua prettierd ];
+      extraPackages = with pkgs; [
+        #lua
+        lua-language-server
+        stylua
+
+        # js/ts
+        typescript-language-server
+        prettierd
+      ];
     };
 
   };

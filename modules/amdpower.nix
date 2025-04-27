@@ -1,16 +1,9 @@
 {
-  boot.kernelParams = [
-    "amd_pstate=guided"
-    "processor.ignore_ppc=1"
-    "radeon.dpm=1"
-    "microcode.amd_sha_check=off"
-  ];
+  boot.kernelParams = [ "amd_pstate=active" "microcode.amd_sha_check=off" ];
 
-  powerManagement = {
-    enable = true;
-    cpuFreqGovernor = "schedutil";
-    scsiLinkPolicy = "med_power_with_dipm"; # For storage power savings
-  };
+  hardware.graphics.enable = true;
+
+  powerManagement.enable = true;
 
   services.tlp = {
     enable = true;
@@ -18,9 +11,10 @@
       # CPU Settings
       CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
       CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+
       CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
       CPU_SCALING_GOVERNOR_ON_BAT = "schedutil";
-      CPU_MAX_PERF_ON_BAT = 70; # Limit max CPU frequency on battery
+      CPU_MAX_PERF_ON_BAT = 50; # Limit max CPU frequency on battery
 
       # Boost Settings
       CPU_BOOST_ON_AC = 1;

@@ -71,6 +71,7 @@
     yazi
   ];
 
+  programs.git.enable = true;
   security.polkit.enable = true;
 
   services = {

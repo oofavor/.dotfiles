@@ -27,14 +27,8 @@
     usbutils # lsusb
     nixfmt
     sing-box
+    wl-clipboard
   ];
-
-  # Basic configuration of git
-  programs.git = {
-    enable = true;
-    userName = "oofavor";
-    userEmail = "favorxog@gmail.com";
-  };
 
   # Starship - an customizable prompt for any shell
   programs.starship = {
@@ -54,8 +48,8 @@
   };
 
   programs.ghostty = {
-  enable = true;
-  settings = {theme =  "tokyonight";};
+    enable = true;
+    settings = { theme = "tokyonight"; };
   };
   home.stateVersion = "24.11";
 
