@@ -2,7 +2,7 @@
 {
   programs.tmux = {
     enable = true;
-    shortcut = "a";
+    shortcut = "i";
 
     # aggressiveResize = true; -- Disabled to be iTerm-friendly
     baseIndex = 1;

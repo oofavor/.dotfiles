@@ -10,6 +10,7 @@
     slurp # screenshot functionality
     wl-clipboard # wl-copy and wl-paste for copy/paste from stdin / stdout
     mako # notification system developed by swaywm maintainer
+    waybar
   ];
 
   # Enable the gnome-keyring secrets vault.
@@ -21,4 +22,6 @@
     enable = true;
     wrapperFeatures.gtk = true;
   };
+
+  programs.waybar.enable = true;
 }
