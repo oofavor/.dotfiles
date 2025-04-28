@@ -1,6 +1,6 @@
 { pkgs, config, ... }:
 let
-  backgroundPath = builtins.toString ../../assets/background.jpg;
+  backgroundPath = builtins.toString ../../../assets/background.jpg;
 in
 {
   imports = [ ./waybar ];
@@ -12,8 +12,8 @@ in
   services.hyprpaper = {
     enable = true;
     settings = {
-      preload = backgroundPath;
-      wallpaper = " , " + backgroundPath;
+      preload = [ backgroundPath ];
+      wallpaper = [ ",${backgroundPath}" ];
     };
   };
 

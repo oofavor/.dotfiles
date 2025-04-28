@@ -5,7 +5,7 @@
     ./hardware-configuration.nix
     ./../../modules/system.nix
     ./../../modules/shell.nix
-    ./../../modules/wm.nix
+    ./../../modules/hyprland.nix
     ./../../modules/nvidia.nix
     ./../../modules/fonts.nix
   ];

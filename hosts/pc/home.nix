@@ -3,6 +3,7 @@
 {
   imports = [
     ./../../home/base
+    ./../../home/dev
     ./../../home/gui
     ./../../home/wm/hypr
   ];
