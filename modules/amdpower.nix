@@ -1,5 +1,8 @@
 {
-  boot.kernelParams = [ "amd_pstate=active" "microcode.amd_sha_check=off" ];
+  boot.kernelParams = [
+    "amd_pstate=active"
+    "microcode.amd_sha_check=off"
+  ];
 
   hardware.graphics.enable = true;
 
@@ -43,4 +46,7 @@
       WOL_DISABLE = "Y";
     };
   };
+
+  services.upower.enable = true;
+
 }

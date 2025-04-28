@@ -4,11 +4,10 @@
   imports = [
     ./hardware-configuration.nix
     ./../../modules/system.nix
-    ./../../modules/nvidia.nix
-    ./../../modules/hypr.nix
-    ./../../modules/sound.nix
-    ./../../modules/fonts.nix
     ./../../modules/shell.nix
+    ./../../modules/wm.nix
+    ./../../modules/nvidia.nix
+    ./../../modules/fonts.nix
   ];
 
   # Bootloader.

@@ -1,14 +1,18 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [
     ./hardware-configuration.nix
     ./../../modules/system.nix
-    ./../../modules/amdpower.nix
-    ./../../modules/hypr.nix
-    ./../../modules/sound.nix
-    ./../../modules/fonts.nix
     ./../../modules/shell.nix
+    ./../../modules/sway.nix
+    ./../../modules/amdpower.nix
+    ./../../modules/fonts.nix
     inputs.ucodenix.nixosModules.default
   ];
 

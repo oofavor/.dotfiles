@@ -1,5 +1,5 @@
-{ pkgs, config, ... }: {
-  imports = [ ./nvim.nix ];
+{ pkgs, config, ... }:
+{
 
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
@@ -25,32 +25,12 @@
     lm_sensors # for `sensors` command
     pciutils # lspci
     usbutils # lsusb
-    nixfmt-rfc-style
+
     sing-box
-    wl-clipboard
+
+    ani-cli
   ];
 
-  # Starship - an customizable prompt for any shell
-  programs.starship = {
-    enable = true;
-    settings = {
-      add_newline = false;
-      aws.disabled = true;
-      gcloud.disabled = true;
-      line_break.disabled = true;
-    };
-  };
-
-  # Editor of choice
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-  };
-
-  programs.ghostty = {
-    enable = true;
-    settings = { theme = "tokyonight"; };
-  };
   home.stateVersion = "24.11";
 
   programs.home-manager.enable = true;

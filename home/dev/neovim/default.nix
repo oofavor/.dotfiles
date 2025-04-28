@@ -1,25 +1,30 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink ./nvim;
 
-  programs = {
-    neovim = {
-      enable = true;
-      plugins = with pkgs.vimPlugins; [
-        telescope-fzf-native-nvim
-        nvim-treesitter.withAllGrammars
-        blink-cmp
-      ];
-      extraPackages = with pkgs; [
-        #lua
-        lua-language-server
-        stylua
+  programs.neovim = {
+    enable = true;
+    plugins = with pkgs.vimPlugins; [
+      nvim-treesitter.withAllGrammars
+      blink-cmp
+    ];
+    extraPackages = with pkgs; [
+      #lua
+      lua-language-server
+      stylua
 
-        # js/ts
-        typescript-language-server
-        prettierd
-        tailwindcss-language-server
+      # js/ts
+      typescript-language-server
+      prettierd
+      tailwindcss-language-server
 
-      ];
-    };
+      #nix
+      nixfmt-rfc-style
+      nil
+    ];
+  };
+
+  home.sessionVariables = {
+    EDITOR = "neovim";
   };
 }

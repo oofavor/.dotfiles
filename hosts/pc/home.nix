@@ -1,7 +1,11 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./../../home/base ./../../home/gui ./../../home/hypr ];
+  imports = [
+    ./../../home/base
+    ./../../home/gui
+    ./../../home/wm/hypr
+  ];
 
   home.username = "ofavor";
   home.homeDirectory = "/home/ofavor";

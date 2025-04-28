@@ -1,16 +1,26 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:
+{
   imports = [ ./vscode.nix ];
 
   home.packages = with pkgs; [
     firefox
     hiddify-app
-    ghostty
     rofi-wayland
-    waybar
-    mako
+    qbittorrent
+    vlc
   ];
 
-  home.sessionVariables = { TERMINAL = "ghostty"; };
-  home.file.".icons/default".source =
-    "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic";
+  programs.ghostty = {
+    enable = true;
+    settings = {
+      theme = "tokyonight";
+      font-feature = "-calt, -liga, -dlig";
+    };
+  };
+
+  home.sessionVariables = {
+    TERMINAL = "ghostty";
+  };
+
+  home.file.".icons/default".source = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic";
 }

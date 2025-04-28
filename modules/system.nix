@@ -1,18 +1,33 @@
-{ pkgs, lib, username, ... }: {
-
+{
+  pkgs,
+  lib,
+  username,
+  ...
+}:
+{
   users.users.${username} = {
     isNormalUser = true;
     description = username;
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
   };
+
+  # TTL sudo for less painful rebuilds
+  security.sudo.extraConfig = ''
+    Defaults        timestamp_timeout=30
+  '';
 
   networking.networkmanager.enable = true;
 
   nix.settings.trusted-users = [ username ];
-
   nix.settings = {
     # enable flakes globally
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # do garbage collection weekly to keep disk usage low
@@ -71,15 +86,36 @@
     yazi
   ];
 
-  programs.git.enable = true;
   security.polkit.enable = true;
 
-  services = {
-    dbus.packages = [ pkgs.gcr ];
-
-    geoclue2.enable = true;
-
-    udev.packages = with pkgs; [ gnome-settings-daemon ];
+  # Enable sound with pipewire.
+  services.pulseaudio.enable = false;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    jack.enable = true;
   };
 
+  services.keyd = {
+    enable = true;
+    keyboards = {
+      default = {
+        ids = [ "*" ];
+        settings = {
+          main = {
+            capslock = "layer(control)";
+          };
+          otherlayer = { };
+        };
+      };
+    };
+  };
+  services = {
+    dbus.packages = [ pkgs.gcr ];
+    geoclue2.enable = true;
+    udev.packages = with pkgs; [ gnome-settings-daemon ];
+  };
 }
