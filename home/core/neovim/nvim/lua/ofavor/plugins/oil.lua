@@ -1,4 +1,4 @@
-vim.keymap.set('n', '<leader>o', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+vim.keymap.set('n', '<leader>;', '<CMD>Oil<CR>', { desc = 'Open oil.nvim' })
 
 return {
   'stevearc/oil.nvim',

@@ -1,11 +1,9 @@
 { config, pkgs, ... }:
 let
   # TODO: make use of config refresh without nixos-rebuild
-  # nvimPath = "${config.home.homeDirectory}/nix-config/home/nvim";
-  nvimPath = ./nvim;
+  nvimPath = "${config.home.homeDirectory}/.dotfiles/home/core/neovim/nvim";
 in
 {
-
   xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink nvimPath;
 
   programs.neovim = {
