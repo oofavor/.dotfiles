@@ -2,10 +2,9 @@
 
 {
   imports = [
-    ./../../home/base
-    ./../../home/gui
-    ./../../home/wm/sway
-    ./../../home/dev
+    ../../home/core
+    ../../home/desktop
+    ../../home/gui
   ];
 
   home.username = "ofavor";

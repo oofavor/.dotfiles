@@ -48,5 +48,4 @@
   };
 
   services.upower.enable = true;
-
 }

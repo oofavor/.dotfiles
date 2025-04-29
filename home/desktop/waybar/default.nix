@@ -7,7 +7,7 @@
 
   programs.waybar = {
     enable = true;
-    style = builtins.readFile ./styles.css;
+    style = builtins.readFile ./style.css;
 
     settings = [
       {

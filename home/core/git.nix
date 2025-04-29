@@ -1,10 +1,4 @@
-{ pkgs, ... }:
 {
-  imports = [
-    ./neovim
-    ./tmux.nix
-  ];
-
   # Basic configuration of git
   programs.git = {
     enable = true;
@@ -19,14 +13,4 @@
       enable = true;
     };
   };
-
-  home.packages = with pkgs; [
-    zig
-    rustc
-    cargo
-    nodejs
-    typescript
-    go
-    gcc
-  ];
 }

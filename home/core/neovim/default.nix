@@ -1,6 +1,12 @@
 { config, pkgs, ... }:
+let
+  # TODO: make use of config refresh without nixos-rebuild
+  # nvimPath = "${config.home.homeDirectory}/nix-config/home/nvim";
+  nvimPath = ./nvim;
+in
 {
-  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink ./nvim;
+
+  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink nvimPath;
 
   programs.neovim = {
     enable = true;
@@ -13,7 +19,7 @@
       lua-language-server
       stylua
 
-      # js/ts
+      # frontend (ts/css)
       typescript-language-server
       prettierd
       tailwindcss-language-server
@@ -22,7 +28,6 @@
       #nix
       nixfmt-rfc-style
       nil
-
     ];
   };
 

@@ -3,11 +3,7 @@ let
   backgroundPath = builtins.toString ../../../assets/background.jpg;
 in
 {
-  imports = [ ./waybar ];
-
-  # home.packages = with pkgs; [ ];
-
-  # xdg.configFile."hyprland".source = config.lib.file.mkOutOfStoreSymlink ./configs/hyprland.conf;
+  imports = [ ../waybar ];
 
   services.hyprpaper = {
     enable = true;
@@ -22,7 +18,6 @@ in
     package = null;
     portalPackage = null;
 
-    extraConfig = builtins.readFile ./configs/minimal.conf;
+    extraConfig = builtins.readFile ./config.conf;
   };
-
 }

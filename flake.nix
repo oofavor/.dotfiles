@@ -1,9 +1,12 @@
 {
-  description = "My NixOS + Home Manager config for PC, Laptop, and WSL";
+  description = "I like descriptive descriptions";
 
   nixConfig = {
-    extra-substituters = [ "https://nix-community.cachix.org" ];
-    extra-trusted-public-keys = [
+    substituters = [
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
+    ];
+    trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
   };
@@ -17,74 +20,72 @@
     };
 
     cpu-microcodes = {
-      url =
-        "github:platomav/CPUMicrocodes/ec5200961ecdf78cf00e55d73902683e835edefd";
+      url = "github:platomav/CPUMicrocodes/ec5200961ecdf78cf00e55d73902683e835edefd";
       flake = false;
     };
+
     ucodenix = {
       url = "github:e-tho/ucodenix";
       inputs.cpu-microcodes.follows = "cpu-microcodes";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
-    nixosConfigurations = {
-      pc = let
-        username = "ofavor";
-        specialArgs = {
-          inherit username;
-          inherit inputs;
-        };
-      in nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        inherit specialArgs;
-        modules = [
-          ./hosts/pc
-          ./hosts/pc/hardware-configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.ofavor = import ./hosts/pc/home.nix;
-          }
-        ];
-      };
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
+    {
+      nixosConfigurations = {
+        # pc
+        nyaa =
+          let
+            username = "ofavor";
+            specialArgs = {
+              inherit username;
+              inherit inputs;
+            };
+          in
+          nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            inherit specialArgs;
+            modules = [
+              ./hosts/nyaa
+              ./hosts/nyaa/hardware-configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.ofavor = import ./hosts/nyaa/home.nix;
+              }
+            ];
+          };
 
-      # TODO
-      laptop = let
-        username = "ofavor";
-        specialArgs = {
-          inherit username;
-          inherit inputs;
-        };
-      in nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        inherit specialArgs;
-        modules = [
-          ./hosts/laptop
-          ./hosts/laptop/hardware-configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.ofavor = import ./hosts/laptop/home.nix;
-          }
-        ];
-      };
-
-      # TODO
-      wsl = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/wsl/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.ofavor = import ./hosts/wsl/home.nix;
-          }
-        ];
+        # Xiaomi laptop
+        wawa =
+          let
+            username = "ofavor";
+            specialArgs = {
+              inherit username;
+              inherit inputs;
+            };
+          in
+          nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            inherit specialArgs;
+            modules = [
+              ./hosts/wawa
+              ./hosts/wawa/hardware-configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.ofavor = import ./hosts/wawa/home.nix;
+              }
+            ];
+          };
       };
     };
-  };
 }

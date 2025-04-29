@@ -1,23 +1,15 @@
 * {
     border: none;
     border-radius: 4px;
-    /* `ttf-font-awesome` is required to be installed for icons */
     font-family: "JetBrainsMono Nerd Font", Helvetica, Arial, sans-serif;
-
-    /* adjust font-size value to your liking: */
-    font-size: 0.9rem;
+    font-size: 1rem;
 
     min-height: 0;
 }
 
 window#waybar {
     background-color: #000;
-    /* border-bottom: 3px solid rgba(100, 114, 125, 0.5); */
     color: #ffffff;
-}
-
-#workspaces {
-    margin-left: -4px;
 }
 
 #workspaces button {
@@ -31,8 +23,9 @@ window#waybar {
 
 #workspaces button.active {
     background: rgba(30, 30, 30, 0.9);
-    text-decoration: underline;
+    border-bottom: 3px solid rgba(100, 114, 125, 0.5);
 }
+
 
 #workspaces button.urgent {
     background-color: #eb4d4b;
@@ -54,7 +47,7 @@ window#waybar {
 
 #window,
 #workspaces {
-    margin: 0 4px;
+    margin: 0;
 }
 
 

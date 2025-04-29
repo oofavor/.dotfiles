@@ -1,12 +1,10 @@
 { config, pkgs, ... }:
 
 {
-
   imports = [
-    ./../../home/base
-    ./../../home/dev
-    ./../../home/gui
-    ./../../home/wm/hypr
+    ../../home/core
+    ../../home/desktop
+    ../../home/gui
   ];
 
   home.username = "ofavor";
