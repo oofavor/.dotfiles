@@ -17,10 +17,12 @@
       typescript-language-server
       prettierd
       tailwindcss-language-server
+      vscode-langservers-extracted
 
       #nix
       nixfmt-rfc-style
       nil
+
     ];
   };
 
