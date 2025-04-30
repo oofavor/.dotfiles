@@ -1,6 +1,5 @@
 { config, pkgs, ... }:
 let
-  # TODO: make use of config refresh without nixos-rebuild
   nvimPath = "${config.home.homeDirectory}/.dotfiles/home/core/neovim/nvim";
 in
 {
@@ -11,9 +10,10 @@ in
     plugins = with pkgs.vimPlugins; [
       nvim-treesitter.withAllGrammars
       blink-cmp
+      telescope-fzf-native-nvim
     ];
     extraPackages = with pkgs; [
-      #lua
+      # lua
       lua-language-server
       stylua
 
@@ -23,13 +23,13 @@ in
       tailwindcss-language-server
       vscode-langservers-extracted
 
-      #nix
+      # nix
       nixfmt-rfc-style
       nil
-    ];
-  };
 
-  home.sessionVariables = {
-    EDITOR = "neovim";
+      # go
+      gopls
+    ];
+    defaultEditor = true;
   };
 }

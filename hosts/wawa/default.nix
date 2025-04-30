@@ -10,7 +10,7 @@
     ./hardware-configuration.nix
     ./../../modules/system.nix
     ./../../modules/shell.nix
-    ./../../modules/sway.nix
+    ./../../modules/hyprland.nix
     ./../../modules/amdpower.nix
     ./../../modules/fonts.nix
     inputs.ucodenix.nixosModules.default
@@ -26,7 +26,11 @@
 
   services.displayManager.ly.enable = true;
 
-  networking.hostName = "ofavor"; # Define your hostname.
+  systemd.sleep.extraConfig = ''
+    HibernateDelaySec=1h
+  '';
+
+  networking.hostName = "wawa"; # Define your hostname.
 
   system.stateVersion = "24.11"; # Did you read the comment?
 }

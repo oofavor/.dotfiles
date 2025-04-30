@@ -27,6 +27,7 @@ require('lazy').setup({
   require 'ofavor.plugins.treesitter',
   require 'ofavor.plugins.oil',
   require 'ofavor.plugins.neotree',
+  require 'ofavor.plugins.ts-autotag',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the

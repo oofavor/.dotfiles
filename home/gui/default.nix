@@ -13,7 +13,6 @@
   programs.ghostty = {
     enable = true;
     settings = {
-      font-family = "JetBrains Nerd Mono";
       theme = "tokyonight";
       font-feature = "-calt, -liga, -dlig";
     };
@@ -21,6 +20,8 @@
 
   home.sessionVariables = {
     TERMINAL = "ghostty";
+    EDITOR = "nvim";
+    SUDO_EDITOR = "vim";
   };
 
   home.file.".icons/default".source = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic";

@@ -119,4 +119,7 @@
     geoclue2.enable = true;
     udev.packages = with pkgs; [ gnome-settings-daemon ];
   };
+
+  environment.variables.EDITOR = "nvim";
+  environment.variables.SUDO_EDITOR = "vim";
 }

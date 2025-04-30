@@ -1,6 +1,6 @@
 { pkgs, config, ... }:
 let
-  waybarPath = "${config.home.homeDirectory}/.dotfiles/home/desktop/waybar/";
+  waybarPath = "${config.home.homeDirectory}/.dotfiles/home/desktop/waybar/config";
 in
 {
   xdg.configFile."waybar".source = config.lib.file.mkOutOfStoreSymlink waybarPath;
