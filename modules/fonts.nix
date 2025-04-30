@@ -16,6 +16,8 @@
       nerd-fonts.jetbrains-mono
 
       bibata-cursors
+
+      monaspace
     ];
 
     # use fonts specified by user rather than default ones
@@ -34,6 +36,7 @@
         "Noto Color Emoji"
       ];
       monospace = [
+        "Monaspace Neon"
         "JetBrainsMono Nerd Font"
         "Noto Color Emoji"
       ];

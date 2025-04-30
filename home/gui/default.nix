@@ -13,6 +13,7 @@
   programs.ghostty = {
     enable = true;
     settings = {
+      font-family = "JetBrains Nerd Mono";
       theme = "tokyonight";
       font-feature = "-calt, -liga, -dlig";
     };
