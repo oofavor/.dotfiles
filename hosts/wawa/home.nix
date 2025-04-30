@@ -3,7 +3,8 @@
 {
   imports = [
     ../../home/core
-    ../../home/desktop
+    ../../home/desktop/sway
+    ../../home/desktop/waybar
     ../../home/gui
   ];
 

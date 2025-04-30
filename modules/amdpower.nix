@@ -2,6 +2,7 @@
   boot.kernelParams = [
     "amd_pstate=active"
     "microcode.amd_sha_check=off"
+    "amdgpu.abmlevel=0"
   ];
 
   hardware.graphics.enable = true;

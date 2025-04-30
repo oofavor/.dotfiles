@@ -14,6 +14,8 @@
       # nerdfonts
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
+      nerd-fonts.caskaydia-mono
+      cascadia-code
 
       bibata-cursors
 
@@ -36,6 +38,7 @@
         "Noto Color Emoji"
       ];
       monospace = [
+        "Cascadia Code NF"
         "Monaspace Neon"
         "JetBrainsMono Nerd Font"
         "Noto Color Emoji"

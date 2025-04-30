@@ -8,5 +8,7 @@
     typescript
     go
     gcc
+
+    nix-prefetch-github
   ];
 }

@@ -1,7 +1,7 @@
 {
   "position": "bottom",
   "height": 5,
-  "modules-left": ["hyprland/workspaces", "hyprland/submap", "custom/media"],
+  "modules-left": ["hyprland/workspaces", "sway/workspaces", "hyprland/submap", "custom/media"],
   "modules-right": ["pulseaudio", "network", "backlight", "battery", "clock", "tray"],
   "idle_inhibitor": {
     "format": "{icon}",

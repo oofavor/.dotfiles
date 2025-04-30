@@ -21,7 +21,8 @@ window#waybar {
     background: rgba(50, 50, 50, 0.9);
 }
 
-#workspaces button.active {
+#workspaces button.active,
+#workspaces button.focused {
     background: rgba(30, 30, 30, 0.9);
     border-bottom: 3px solid rgba(100, 114, 125, 0.5);
 }

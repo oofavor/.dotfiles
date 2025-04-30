@@ -1,30 +1,14 @@
 { pkgs, config, ... }:
+let
+  swayPath = "${config.home.homeDirectory}/.dotfiles/home/desktop/sway/sway";
+in
 {
-  wayland.windowManager.sway = {
-    enable = true;
-    wrapperFeatures.gtk = true; # Fixes common issues with GTK 3 apps
-    config = rec {
-      modifier = "Mod4";
-      terminal = "ghostty";
-      startup = [
-        { command = "firefox"; }
-      ];
-      input = {
-        "1267:12856:ELAN2310:00_04F3:3238_Touchpad" = {
-          natural_scroll = "enabled";
-          tap = "enabled";
-        };
-      };
-      window = {
-        titlebar = false;
-      };
-    };
-  };
+  xdg.configFile."sway".source = config.lib.file.mkOutOfStoreSymlink swayPath;
 
-  # xdg.configFile."waybar".source = config.lib.file.mkOutOfStoreSymlink ./waybar;
-  programs.waybar = {
-    enable = true;
-    systemd.enable = true;
-    # style = builtins.readFile ./waybar/styles.css;
-  };
+  services.gnome-keyring.enable = true;
+
+  # wayland.windowManager.sway = {
+  #   enable = true;
+  #
+  # };
 }

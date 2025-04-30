@@ -8,9 +8,10 @@
     mako # notification system developed by swaywm maintainer
     waybar
   ];
+
   programs.hyprland = {
     enable = true;
   };
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 }

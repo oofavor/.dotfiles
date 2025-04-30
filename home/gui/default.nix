@@ -16,6 +16,7 @@
     enable = true;
     settings = {
       theme = "tokyonight";
+      font-family = "Cascadia Code NF";
       font-feature = "-calt, -liga, -dlig";
     };
   };

@@ -10,7 +10,7 @@
     ./hardware-configuration.nix
     ./../../modules/system.nix
     ./../../modules/shell.nix
-    ./../../modules/hyprland.nix
+    ./../../modules/sway.nix
     ./../../modules/amdpower.nix
     ./../../modules/fonts.nix
     inputs.ucodenix.nixosModules.default
