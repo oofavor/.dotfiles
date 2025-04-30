@@ -8,6 +8,8 @@
     rofi-wayland
     qbittorrent
     vlc
+
+    obsidian
   ];
 
   programs.ghostty = {
