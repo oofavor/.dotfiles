@@ -1,14 +1,14 @@
 {
   description = "I like descriptive descriptions";
 
-  # nixConfig = {
-  #   extra-substituters = [
-  #     "https://nix-community.cachix.org"
-  #   ];
-  #   extra-trusted-public-keys = [
-  #     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-  #   ];
-  # };
+  nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -26,6 +26,13 @@
     ucodenix = {
       url = "github:e-tho/ucodenix";
       inputs.cpu-microcodes.follows = "cpu-microcodes";
+    };
+
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
+      # to have it up-to-date or simply don't specify the nixpkgs input
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -58,6 +65,7 @@
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.users.ofavor = import ./hosts/nyaa/home.nix;
+
               }
             ];
           };

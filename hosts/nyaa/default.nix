@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -21,5 +26,11 @@
 
   networking.hostName = "nyaa"; # Define your hostname.
 
+  # TODO: change once official package comes out
+  environment.systemPackages = [
+    inputs.zen-browser.packages."x86_64-linux".twilight
+  ];
+
   system.stateVersion = "24.11"; # Did you read the comment?
+
 }

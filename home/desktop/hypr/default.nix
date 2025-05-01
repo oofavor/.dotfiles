@@ -17,6 +17,8 @@ in
     enable = true;
     package = null;
     portalPackage = null;
+    xwayland.enable = false;
+    systemd.enable = true;
 
     extraConfig = builtins.readFile ./config.conf;
   };

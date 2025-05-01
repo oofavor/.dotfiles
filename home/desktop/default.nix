@@ -4,4 +4,5 @@
     ./hypr
     ./waybar
   ];
+
 }

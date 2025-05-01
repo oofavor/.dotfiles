@@ -1,6 +1,12 @@
-{ pkgs, config, ... }:
 {
-  imports = [ ./vscode.nix ];
+  pkgs,
+  config,
+  ...
+}:
+{
+  imports = [
+    ./vscode.nix
+  ];
 
   home.packages = with pkgs; [
     firefox
@@ -10,8 +16,23 @@
     vlc
 
     obsidian
+
+    # TODO: move prism to games/
+    (prismlauncher.override {
+      # Add binary required by some mod
+      additionalPrograms = [ ffmpeg ];
+
+      # Change Java runtimes available to Prism Launcher
+      jdks = [
+        graalvm-ce
+        zulu8
+        zulu17
+        zulu
+      ];
+    })
   ];
 
+  # TODO: move to programs specific files
   programs.ghostty = {
     enable = true;
     settings = {
@@ -23,8 +44,7 @@
 
   home.sessionVariables = {
     TERMINAL = "ghostty";
-    EDITOR = "nvim";
-    SUDO_EDITOR = "vim";
+    NIXOS_OZONE_WL = "1";
   };
 
   home.file.".icons/default".source = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic";
