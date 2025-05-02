@@ -13,7 +13,7 @@ set $term ghostty
 set $menu rofi -show drun
 
 output * bg ~/.dotfiles/assets/background.jpg fill
-
+output eDP-1 mode 2560x1600@120Hz
 
 # Autostart
 exec swaymsg "workspace 1; exec $term"
@@ -39,6 +39,8 @@ input 1267:12856:ELAN2310:00_04F3:3238_Touchpad {
   tap enabled
   natural_scroll enabled
   middle_emulation enabled
+  # pointer_accel = -1
+  # scroll_factor = 0.2
 }
 
 

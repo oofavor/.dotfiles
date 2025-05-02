@@ -5,6 +5,7 @@
     ../../home/core
     ../../home/desktop/sway
     ../../home/desktop/waybar
+    ../../home/desktop/rofi
     ../../home/gui
   ];
 

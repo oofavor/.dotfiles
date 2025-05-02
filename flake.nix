@@ -36,6 +36,7 @@
     };
   };
 
+  # TODO: Improve whatever this is please
   outputs =
     {
       self,
@@ -65,7 +66,7 @@
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.users.ofavor = import ./hosts/nyaa/home.nix;
-
+                home-manager.extraSpecialArgs = specialArgs;
               }
             ];
           };
@@ -90,6 +91,7 @@
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.users.ofavor = import ./hosts/wawa/home.nix;
+                home-manager.extraSpecialArgs = specialArgs;
               }
             ];
           };

@@ -4,7 +4,6 @@
   imports = [
     ../../home/core
     ../../home/desktop
-    ../../home/desktop
     ../../home/gui
   ];
 

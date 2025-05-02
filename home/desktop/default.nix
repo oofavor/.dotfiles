@@ -3,6 +3,6 @@
   imports = [
     ./hypr
     ./waybar
+    ./rofi
   ];
-
 }
