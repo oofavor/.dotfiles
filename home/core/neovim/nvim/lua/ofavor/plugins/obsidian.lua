@@ -1,8 +1,11 @@
 -- For obsidian.nvim
 vim.opt.conceallevel = 1
 
-vim.keymap.set('n', '<leader>ot', '<CMD>ObsidianTags<CR>', { desc = '[O]bsidian Tags' })
-vim.keymap.set('n', '<leader>of', '<CMD>ObsidianTags<CR>', { desc = '[O]bsidian Tags' })
+vim.keymap.set('n', '<leader>ot', '<CMD>ObsidianTags<CR>', { desc = '[O]bsidian Tags Search' })
+vim.keymap.set('n', '<leader>od', '<CMD>ObsidianToday<CR>', { desc = '[O]bsidian Daily Note' })
+vim.keymap.set('n', '<leader>of', '<CMD>ObsidianQuickSwitch<CR>', { desc = '[O]bsidian Notes Search' })
+vim.keymap.set('n', '<leader>oi', '<CMD>ObsidianNew<CR>', { desc = '[O]bsidian Create Note' })
+vim.keymap.set('n', '<leader>ob', '<CMD>ObsidianBacklinks<CR>', { desc = '[O]bsidian Backlinks' })
 
 return {
   'epwalsh/obsidian.nvim',
@@ -18,8 +21,12 @@ return {
       },
     },
     daily_notes = {
-      folder = 'notes/dailies',
+      folder = 'Daily',
       default_tags = { 'daily-notes' },
     },
+    note_id_func = function(title)
+      -- it might cause some unique primary key contrains but who cares
+      return title
+    end,
   },
 }
