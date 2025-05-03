@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   tokyonight = pkgs.tmuxPlugins.mkTmuxPlugin {
     pluginName = "tokyo-night-tmux";
@@ -13,6 +13,10 @@ let
   };
 in
 {
+  home.packages = with pkgs; [ tmux-sessionizer ];
+  # xdg.configFile."tms/config.toml".text = ''
+  # '';
+
   programs.tmux = {
     enable = true;
     # aggressiveResize = true; -- Disabled to be iTerm-friendly
@@ -48,7 +52,6 @@ in
       }
       yank
       vim-tmux-navigator
-      tmux-sessionx
     ];
 
     extraConfig = ''
@@ -63,12 +66,14 @@ in
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
       bind c new-window -c "#{pane_current_path}"
-      bind r source-file ~/.tmux.conf \; display-message "Config reloaded..."
 
       set -g default-terminal "xterm-256color"
       set -ga terminal-overrides ",*256col*:Tc"
       set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
       set-environment -g COLORTERM "truecolor"
+
+      bind C-o display-popup -E "tms switch"
+      bind C-w command-prompt -p "Rename active session to: " "run-shell 'tms rename %1'"
     '';
   };
 }

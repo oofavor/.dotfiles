@@ -11,8 +11,7 @@
     inputs.ucodenix.nixosModules.default
     ./../../modules/system.nix
     ./../../modules/shell.nix
-    ./../../modules/sway.nix
-    ./../../modules/hyprland.nix
+    ./../../modules/desktop.nix
     ./../../modules/amdpower.nix
     ./../../modules/fonts.nix
     ./../../modules/syncthing.nix

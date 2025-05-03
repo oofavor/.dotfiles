@@ -10,7 +10,7 @@
     ./hardware-configuration.nix
     ./../../modules/system.nix
     ./../../modules/shell.nix
-    ./../../modules/hyprland.nix
+    ./../../modules/desktop.nix
     ./../../modules/nvidia.nix
     ./../../modules/fonts.nix
     ./../../modules/syncthing.nix

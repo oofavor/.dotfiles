@@ -1,8 +1,6 @@
+{ pkgs, ... }:
 {
-  pkgs,
-  ...
-}:
-{
+  # Install hyprland
   environment.systemPackages = with pkgs; [
     grim # screenshot functionality
     slurp # screenshot functionality
@@ -11,10 +9,10 @@
     waybar
   ];
 
-  # Enable the gnome-keyring secrets vault.
-  # Will be exposed through DBus to programs willing to store secrets.
-  services.gnome.gnome-keyring.enable = true;
-  security.polkit.enable = true;
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
 
   # enable Sway window manager
   programs.sway = {
