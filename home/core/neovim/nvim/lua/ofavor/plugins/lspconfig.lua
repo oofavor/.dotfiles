@@ -4,6 +4,8 @@ vim.lsp.enable 'tailwindcss'
 vim.lsp.enable 'nil_ls'
 vim.lsp.enable 'cssls'
 vim.lsp.enable 'gopls'
+vim.lsp.enable 'markdown_oxide'
+vim.lsp.enable 'jsonls'
 
 return {
   -- Main LSP Configuration

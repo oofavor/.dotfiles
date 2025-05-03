@@ -8,12 +8,14 @@
 {
   imports = [
     ./hardware-configuration.nix
+    inputs.ucodenix.nixosModules.default
     ./../../modules/system.nix
     ./../../modules/shell.nix
     ./../../modules/sway.nix
+    ./../../modules/hyprland.nix
     ./../../modules/amdpower.nix
     ./../../modules/fonts.nix
-    inputs.ucodenix.nixosModules.default
+    ./../../modules/syncthing.nix
   ];
 
   services.ucodenix.enable = true;

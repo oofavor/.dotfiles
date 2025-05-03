@@ -29,6 +29,9 @@ in
 
       # go
       gopls
+
+      # obsidian
+      markdown-oxide
     ];
     defaultEditor = true;
   };

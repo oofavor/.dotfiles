@@ -1,0 +1,39 @@
+theme = tokyonight
+
+# 13.2 good bar
+# 14.1 good full
+# 15.3 perf full
+
+font-size = 13.1
+font-family = Cascadia Code NF
+font-feature = -calt, -liga, -dlig
+
+
+keybind = shift+n=decrease_font_size:0.01
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

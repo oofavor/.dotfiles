@@ -38,11 +38,7 @@ in
       }
       {
         plugin = resurrect;
-        extraConfig = ''
-          resurrect_dir="$HOME/.tmux/resurrect"
-          set -g @resurrect-dir $resurrect_dir
-          set -g @resurrect-hook-post-save-all 'target=$(readlink -f $resurrect_dir/last); sed "s| --cmd .*-vim-pack-dir||g; s|/etc/profiles/per-user/$USER/bin/||g; s|/home/$USER/.nix-profile/bin/||g" $target | sponge $target'
-        '';
+        extraConfig = '''';
       }
       {
         plugin = continuum;
@@ -52,6 +48,7 @@ in
       }
       yank
       vim-tmux-navigator
+      tmux-sessionx
     ];
 
     extraConfig = ''

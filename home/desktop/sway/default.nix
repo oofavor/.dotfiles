@@ -9,6 +9,5 @@ in
 
   # wayland.windowManager.sway = {
   #   enable = true;
-  #
   # };
 }

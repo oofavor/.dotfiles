@@ -10,6 +10,7 @@
     ./games
     ./editors
     ./terminals
+    ./productivity
   ];
 
   # WARN:
