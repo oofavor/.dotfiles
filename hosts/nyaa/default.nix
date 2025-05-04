@@ -13,7 +13,6 @@
     ./../../modules/desktop.nix
     ./../../modules/nvidia.nix
     ./../../modules/fonts.nix
-    ./../../modules/syncthing.nix
   ];
 
   # Bootloader.

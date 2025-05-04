@@ -14,7 +14,6 @@
     ./../../modules/desktop.nix
     ./../../modules/amdpower.nix
     ./../../modules/fonts.nix
-    ./../../modules/syncthing.nix
   ];
 
   services.ucodenix.enable = true;
