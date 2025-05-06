@@ -18,6 +18,7 @@ return { -- Collection of various small independent plugins/modules
     require('mini.surround').setup()
     require('mini.jump2d').setup()
     require('mini.move').setup()
+    require('mini.pairs').setup()
     -- Simple and easy statusline.
     --  You could remove this setup call if you don't like it,
     --  and try some other statusline plugin
