@@ -1,32 +1,17 @@
 * {
-    border: none;
-    border-radius: 4px;
     font-family: "JetBrainsMono Nerd Font", Helvetica, Arial, sans-serif;
     font-size: 1rem;
 
     min-height: 0;
-}
 
-window#waybar {
-    background-color: #000;
-    color: #ffffff;
-}
-
-#workspaces button {
-    color: #fff;
+    background-color: #000000;
+    color: white;
 }
 
 /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 #workspaces button:hover {
-    background: rgba(50, 50, 50, 0.9);
+    background: none;
 }
-
-#workspaces button.active,
-#workspaces button.focused {
-    background: rgba(30, 30, 30, 0.9);
-    border-bottom: 3px solid rgba(100, 114, 125, 0.5);
-}
-
 
 #workspaces button.urgent {
     background-color: #eb4d4b;
@@ -43,51 +28,16 @@ window#waybar {
 #tray {
     padding: 0 10px;
     margin: 6px 3px;
-    color: #000000;
 }
-
-#window,
-#workspaces {
-    margin: 0;
-}
-
 
 #battery.charging {
     color: #ffffff;
     background-color: #000000;
 }
 
-@keyframes blink {
-    to {
-        background-color: #ffffff;
-        color: #000000;
-    }
-}
-
 #battery.critical:not(.charging) {
     background-color: #f53c3c;
     color: #ffffff;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-}
-
-label:focus {
-    background-color: #000000;
-}
-
-#clock,
-#battery,
-#cpu,
-#memory,
-#backlight,
-#network,
-#pulseaudio,
-#pulseaudio.muted {
-    background-color: #000000;
-    color: white;
 }
 
 #network.disconnected {

@@ -61,6 +61,7 @@ in
       setw -g mode-keys vi
       set-option -g mouse on
       set-option -g status-position bottom
+      set -g renumber-windows on
 
       # easy-to-remember split pane commands
       bind | split-window -h -c "#{pane_current_path}"

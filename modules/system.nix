@@ -124,5 +124,4 @@
   environment.variables.EDITOR = "nvim";
   environment.variables.SUDO_EDITOR = "vim";
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
-
 }

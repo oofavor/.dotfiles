@@ -2,14 +2,18 @@
   "position": "bottom",
   "height": 5,
   "modules-left": ["hyprland/workspaces", "sway/workspaces", "hyprland/submap", "custom/media"],
-  "modules-right": ["pulseaudio", "network", "backlight", "battery", "clock", "tray"],
-  "idle_inhibitor": {
-    "format": "{icon}",
-    "format-icons": {
-      "activated": "",
-      "deactivated": ""
-    }
-  },
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio", "network", "backlight", "battery", "tray"],
+  "hyprland/workspaces": {
+        "format": "<span size='larger'>{icon}</span>",
+        "on-click": "activate",
+        "format-icons": {
+            "active": "\uf444",
+            "default": "\uf4c3"
+        },
+        "icon-size": 10,
+        "sort-by-number": true
+    },
   "tray": {
     "spacing": 10
   },
@@ -45,7 +49,7 @@
   "pulseaudio": {
     "format": "{volume}% {icon}",
     "format-bluetooth": "{volume}% {icon}",
-    "format-muted": "",
+    "format-muted": "",
     "format-icons": {
       "alsa_output.pci-0000_00_1f.3.analog-stereo": "",
       "alsa_output.pci-0000_00_1f.3.analog-stereo-muted": "",
