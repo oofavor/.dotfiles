@@ -14,8 +14,23 @@ let
 in
 {
   home.packages = with pkgs; [ tmux-sessionizer ];
-  # xdg.configFile."tms/config.toml".text = ''
-  # '';
+  xdg.configFile."tms/config.toml".text = ''
+    [[search_dirs]]
+    path = "/home/ofavor/obsidian"
+    depth = 10
+    search_submodules = true
+    full_path = true
+
+    [[search_dirs]]
+    path = "/home/ofavor/.dotfiles"
+    depth = 10
+
+    [[search_dirs]]
+    path = "/home/ofavor/projects"
+    depth = 10
+    search_submodules = true
+    full_path = true
+  '';
 
   programs.tmux = {
     enable = true;

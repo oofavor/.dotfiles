@@ -24,6 +24,14 @@ return {
   },
   config = function()
     require('telescope').setup {
+      defaults = {
+        layout_config = {
+          horizontal = {
+            preview_cutoff = 0,
+            width = 0.99,
+          },
+        },
+      },
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),

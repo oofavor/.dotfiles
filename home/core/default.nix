@@ -6,6 +6,7 @@
     ./tmux.nix
     ./utils.nix
     ./neovim
+    ./helix
   ];
 
   home.stateVersion = "24.11";

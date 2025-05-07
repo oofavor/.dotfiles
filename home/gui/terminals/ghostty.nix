@@ -3,7 +3,8 @@
     enable = true;
     settings = {
       theme = "tokyonight";
-      font-family = "JetBrainsMono Nerd Font";
+      # font-family = "CaskaydiaMono";
+      font-family = "Monaspace Neon";
       # no ligatures!!!
       font-feature = "-calt, -liga, -dlig";
     };
