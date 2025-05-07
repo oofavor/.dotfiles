@@ -2,32 +2,30 @@
     font-family: "JetBrainsMono Nerd Font", Helvetica, Arial, sans-serif;
     font-size: 1rem;
 
-    min-height: 0;
-
     background-color: #000000;
     color: white;
 }
 
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-#workspaces button:hover {
+/* removes every effect from buttons */
+#workspaces button {
+    box-shadow: none;
+    text-shadow: none;
     background: none;
+    transition: none;
+    border: none;
 }
 
-#workspaces button.urgent {
-    background-color: #eb4d4b;
-}
-
+#language,
 #clock,
 #battery,
-#cpu,
-#memory,
-#temperature,
 #backlight,
 #network,
 #pulseaudio,
 #tray {
     padding: 0 10px;
-    margin: 6px 3px;
+    margin: 0 3px;
+    /* border-right: 1px solid #fff; */
+    /* border-left: 1px solid #fff; */
 }
 
 #battery.charging {

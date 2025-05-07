@@ -6,7 +6,10 @@ return {
     require('tokyonight').setup {
       styles = {
         comments = { italic = false }, -- Disable italics in comments
+        -- sidebars = 'transparent',
+        -- floats = 'transparent',
       },
+      -- transparent = true,
     }
 
     vim.cmd.colorscheme 'tokyonight-night'

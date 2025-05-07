@@ -38,6 +38,7 @@ in
 
           set -g @tokyo-night-tmux_window_tidy_icons 1
           set -g @tokyo-night-tmux_show_datetime 0
+          set -g @tokyo-night-tmux_transparent 1
         '';
       }
       {
