@@ -7,6 +7,7 @@
     ./utils.nix
     ./neovim
     ./helix
+    ./shell.nix
   ];
 
   home.stateVersion = "24.11";
