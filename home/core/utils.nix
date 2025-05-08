@@ -8,7 +8,6 @@
     zip
     unzip
     ripgrep
-    fzf
     gnused
     gnutar
     glow
