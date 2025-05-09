@@ -1,1 +1,6 @@
-{ imports = [ ./prism.nix ]; }
+{
+  imports = [
+    ./prism.nix
+    ./osu.nix
+  ];
+}
