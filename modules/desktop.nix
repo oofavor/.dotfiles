@@ -13,6 +13,8 @@
     enable = true;
     xwayland.enable = true;
   };
+  services.hypridle.enable = true;
+  programs.hyprlock.enable = true;
 
   # enable Sway window manager
   programs.sway = {
