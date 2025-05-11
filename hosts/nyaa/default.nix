@@ -30,4 +30,16 @@
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.blacklistedKernelModules = [ "snd_pcsp" ];
+
+  programs.kdeconnect.enable = true;
+
+  networking.firewall = rec {
+    allowedTCPPortRanges = [
+      {
+        from = 1714;
+        to = 1764;
+      }
+    ];
+    allowedUDPPortRanges = allowedTCPPortRanges;
+  };
 }

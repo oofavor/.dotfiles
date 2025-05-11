@@ -3,7 +3,7 @@
   "height": 5,
   "modules-left": ["hyprland/workspaces", "sway/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["pulseaudio", "network", "backlight", "battery", "hyprland/language", "tray"],
+  "modules-right": ["pulseaudio", "network", "backlight", "battery", "hyprland/language", "custom/keyboard", "tray"],
   "hyprland/workspaces": {
         "format": "<span size='larger'>{icon}</span>",
         "on-click": "activate",
@@ -72,6 +72,14 @@
 	  "scroll-step": 1,
 	  "on-click": "pwvucontrol",
 	  "ignored-sinks": ["Easy Effects Sink"]
+  },
+  "custom/keyboard": {
+    "on-click": "wvkbd-mobintl",
+    "on-click-right": "kill -9 $(pgrep wvkbd-mobintl)",
+    "format": "{icon}",
+    "format-icons": {
+      "default": "KEYBOARD"
+    }
   }
 }
 
