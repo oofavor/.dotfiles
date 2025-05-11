@@ -7,7 +7,7 @@ in
 
   home.packages = with pkgs; [
     networkmanagerapplet
-    pavucontrol
+    pwvucontrol
   ];
 
   programs.waybar = {

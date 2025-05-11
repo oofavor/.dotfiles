@@ -15,6 +15,14 @@
 	"icon-size": 10,
 	"sort-by-number": true,
   },
+  "hyprland/window": {
+    "format": "👉 {}",
+    "rewrite": {
+        "(.*) — Mozilla Firefox": "🌎 $1",
+        "(.*) - fish": "> [$1]"
+    },
+    "separate-outputs": true
+  },
   "hyprland/language": {
 	  "format": "{short}"
   },
@@ -62,7 +70,7 @@
 		  "default": ["", ""]
 	  },
 	  "scroll-step": 1,
-	  "on-click": "pavucontrol",
+	  "on-click": "pwvucontrol",
 	  "ignored-sinks": ["Easy Effects Sink"]
   }
 }

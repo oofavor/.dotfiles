@@ -90,14 +90,15 @@
   services.gnome.gnome-keyring.enable = true;
 
   # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
+  # rtkit is optional but recommended
+  security.rtkit.enable = true;
   services.pipewire = {
-    enable = true;
+    enable = true; # if not already enabled
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
     # If you want to use JACK applications, uncomment this
-    jack.enable = true;
+    #jack.enable = true;
   };
 
   services.keyd = {
