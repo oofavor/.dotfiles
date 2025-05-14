@@ -32,6 +32,10 @@ in
 
       # obsidian
       markdown-oxide
+
+      #python
+      pyright
+
     ];
     defaultEditor = true;
   };

@@ -6,6 +6,7 @@ vim.lsp.enable 'cssls'
 vim.lsp.enable 'gopls'
 vim.lsp.enable 'markdown_oxide'
 vim.lsp.enable 'jsonls'
+vim.lsp.enable 'pyright'
 
 return {
   -- Main LSP Configuration

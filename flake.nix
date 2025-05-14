@@ -20,6 +20,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+
+      # Optional but recommended to limit the size of your system closure.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     cpu-microcodes = {
       url = "github:platomav/CPUMicrocodes/ec5200961ecdf78cf00e55d73902683e835edefd";
       flake = false;
@@ -44,6 +51,7 @@
       self,
       nixpkgs,
       home-manager,
+      lanzaboote,
       ...
     }@inputs:
     {
@@ -61,6 +69,7 @@
             system = "x86_64-linux";
             inherit specialArgs;
             modules = [
+              lanzaboote.nixosModules.lanzaboote
               ./hosts/nyaa
               ./hosts/nyaa/hardware-configuration.nix
               home-manager.nixosModules.home-manager

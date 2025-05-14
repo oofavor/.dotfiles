@@ -9,6 +9,7 @@
   imports = [
     ./hardware-configuration.nix
     ./../../modules/system.nix
+    ./../../modules/secureboot.nix
     ./../../modules/shell.nix
     ./../../modules/desktop.nix
     ./../../modules/nvidia.nix
@@ -16,11 +17,7 @@
   ];
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.useOSProber = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.efiSupport = true;
 
   services.displayManager.ly.enable = true;
 
@@ -33,13 +30,4 @@
 
   programs.kdeconnect.enable = true;
 
-  networking.firewall = rec {
-    allowedTCPPortRanges = [
-      {
-        from = 1714;
-        to = 1764;
-      }
-    ];
-    allowedUDPPortRanges = allowedTCPPortRanges;
-  };
 }
