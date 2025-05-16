@@ -35,7 +35,7 @@ in
 
       #python
       pyright
-
+      black
     ];
     defaultEditor = true;
   };

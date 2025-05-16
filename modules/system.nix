@@ -117,13 +117,19 @@
   };
 
   services = {
-    dbus.packages = [ pkgs.gcr ];
+    dbus.packages = with pkgs; [ gcr ];
     geoclue2.enable = true;
     udev.packages = with pkgs; [ gnome-settings-daemon ];
   };
 
-  environment.variables.EDITOR = "nvim";
-  environment.variables.SUDO_EDITOR = "vim";
-  environment.variables.MANPAGER = "nvim -c '+Man!'";
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.variables = {
+    EDITOR = "nvim";
+    SUDO_EDITOR = "vim";
+    MANPAGER = "nvim -c '+Man!'";
+  };
+
+  environment.sessionVariables = {
+    TERMINAL = "ghostty";
+    NIXOS_OZONE_WL = "1";
+  };
 }

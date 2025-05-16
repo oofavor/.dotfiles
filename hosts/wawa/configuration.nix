@@ -1,14 +1,8 @@
-{
-  config,
-  pkgs,
-  inputs,
-  ...
-}:
-
+{ inputs, ... }:
 {
   imports = [
-    ./hardware-configuration.nix
     inputs.ucodenix.nixosModules.default
+    ./hardware-configuration.nix
     ./../../modules/system.nix
     ./../../modules/shell.nix
     ./../../modules/desktop.nix
@@ -16,6 +10,8 @@
     ./../../modules/fonts.nix
   ];
 
+  networking.hostName = "wawa"; # Define your hostname.
+  system.stateVersion = "24.11"; # Did you read the comment?
   services.ucodenix.enable = true;
 
   # Bootloader.
@@ -29,8 +25,4 @@
   systemd.sleep.extraConfig = ''
     HibernateDelaySec=1h
   '';
-
-  networking.hostName = "wawa"; # Define your hostname.
-
-  system.stateVersion = "24.11"; # Did you read the comment?
 }

@@ -158,7 +158,7 @@ return {
       -- gopls = {},
       -- pyright = {},
       -- rust_analyzer = {},
-      -- ts_ls = {},
+      ts_ls = {},
 
       lua_ls = {
         settings = {

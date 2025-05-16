@@ -1,29 +1,22 @@
 {
   description = "I like descriptive descriptions";
 
-  # nixConfig = {
-  #   extra-substituters = [
-  #     "https://nix-community.cachix.org"
-  #     "https://cache.nixos.org"
-  #   ];
-  #   extra-trusted-public-keys = [
-  #     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-  #     "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-  #   ];
-  # };
+  nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://cache.nixos.org"
+    ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    ];
+  };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.2";
-
-      # Optional but recommended to limit the size of your system closure.
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -51,26 +44,24 @@
       self,
       nixpkgs,
       home-manager,
-      lanzaboote,
       ...
     }@inputs:
     {
-      nixosConfigurations = {
-        # pc
-        nyaa =
-          let
-            username = "ofavor";
-            specialArgs = {
-              inherit username;
-              inherit inputs;
-            };
-          in
-          nixpkgs.lib.nixosSystem {
+      nixosConfigurations =
+        let
+          username = "ofavor";
+          specialArgs = {
+            inherit username;
+            inherit inputs;
+          };
+        in
+        {
+          # pc
+          nyaa = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
             inherit specialArgs;
             modules = [
-              lanzaboote.nixosModules.lanzaboote
-              ./hosts/nyaa
+              ./hosts/nyaa/configuration.nix
               ./hosts/nyaa/hardware-configuration.nix
               home-manager.nixosModules.home-manager
               {
@@ -82,20 +73,12 @@
             ];
           };
 
-        # Xiaomi laptop
-        wawa =
-          let
-            username = "ofavor";
-            specialArgs = {
-              inherit username;
-              inherit inputs;
-            };
-          in
-          nixpkgs.lib.nixosSystem {
+          # Xiaomi laptop
+          wawa = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
             inherit specialArgs;
             modules = [
-              ./hosts/wawa
+              ./hosts/wawa/configuration.nix
               ./hosts/wawa/hardware-configuration.nix
               home-manager.nixosModules.home-manager
               {
@@ -106,6 +89,6 @@
               }
             ];
           };
-      };
+        };
     };
 }

@@ -1,11 +1,12 @@
-{ config, pkgs, ... }:
-
 {
-  imports = [
-    ../../home/core
-    ../../home/desktop
-    ../../home/gui
-  ];
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib;
+{
+  imports = [ ../../home ];
 
   home.username = "ofavor";
   home.homeDirectory = "/home/ofavor";
@@ -19,5 +20,4 @@
 
   programs.home-manager.enable = true;
 
-  games.enable = false;
 }

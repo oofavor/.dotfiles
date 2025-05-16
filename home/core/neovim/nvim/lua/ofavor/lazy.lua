@@ -30,6 +30,7 @@ require('lazy').setup({
   require 'ofavor.plugins.ts-autotag',
   require 'ofavor.plugins.obsidian',
   require 'ofavor.plugins.leetcode',
+  require 'ofavor.plugins.tailwind',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the

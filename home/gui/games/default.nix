@@ -1,18 +1,8 @@
+{ lib, ... }:
 {
-  lib,
-  config,
-  ...
-}:
-with lib;
-{
-  options = {
-    games.enable = mkEnableOption "Games";
-  };
+  imports = [
+    ./osu.nix
+    ./prism.nix
+  ];
 
-  config = mkIf config.games.enable {
-    self.imports = [
-      ./prism.nix
-      ./osu.nix
-    ];
-  };
 }

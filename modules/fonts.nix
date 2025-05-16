@@ -14,7 +14,7 @@
       # nerdfonts
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
-      nerd-fonts.caskaydia-mono
+      nerd-fonts.caskaydia-cove
       cascadia-code
 
       bibata-cursors
