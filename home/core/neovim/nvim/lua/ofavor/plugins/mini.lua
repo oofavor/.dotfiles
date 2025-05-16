@@ -1,4 +1,3 @@
--- vim.keymap.set('n', '<leader>;', '<CMD>MiniFiles.open()<CR>', { desc = 'mini.files' })
 return { -- Collection of various small independent plugins/modules
   'echasnovski/mini.nvim',
   config = function()
@@ -19,6 +18,10 @@ return { -- Collection of various small independent plugins/modules
     require('mini.jump2d').setup()
     require('mini.move').setup()
     require('mini.pairs').setup()
+    require('mini.files').setup()
+    Mini = require 'mini.files'
+
+    vim.keymap.set('n', '<leader>;', Mini.open, { desc = 'mini.files' })
     -- Simple and easy statusline.
     --  You could remove this setup call if you don't like it,
     --  and try some other statusline plugin

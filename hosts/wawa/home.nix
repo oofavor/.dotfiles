@@ -3,7 +3,6 @@
 {
   imports = [
     ../../home/core
-    ../../home/desktop/sway
     ../../home/desktop
     ../../home/gui
   ];
@@ -19,4 +18,6 @@
   ];
 
   programs.home-manager.enable = true;
+
+  games.enable = false;
 }

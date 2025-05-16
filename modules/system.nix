@@ -124,7 +124,6 @@
 
   environment.variables.EDITOR = "nvim";
   environment.variables.SUDO_EDITOR = "vim";
+  environment.variables.MANPAGER = "nvim -c '+Man!'";
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
-
-  programs.thunar.enable = true;
 }

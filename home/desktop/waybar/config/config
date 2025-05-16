@@ -5,13 +5,12 @@
   "modules-center": ["clock"],
   "modules-right": ["pulseaudio", "network", "backlight", "battery", "hyprland/language", "custom/keyboard", "tray"],
   "hyprland/workspaces": {
-        "format": "<span size='larger'>{icon}</span>",
-        "on-click": "activate",
-        "format-icons": {
-            "active": "\uf444",
-            "default": "\uf4c3",
-	    "urgent": " ǃ",
+  	"format": "{name}",
+	"format-icons": {
+		"active": "",
+		"default": ""
 	},
+        "on-click": "activate",
 	"icon-size": 10,
 	"sort-by-number": true,
   },
@@ -78,7 +77,7 @@
     "on-click-right": "kill -9 $(pgrep wvkbd-mobintl)",
     "format": "{icon}",
     "format-icons": {
-      "default": "KEYBOARD"
+      "default": "⌨️"
     }
   }
 }

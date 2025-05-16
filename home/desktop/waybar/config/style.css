@@ -15,13 +15,18 @@
     border: none;
 }
 
+#workspaces button.active {
+    font-weight: 900;
+}
+
 #language,
 #clock,
 #battery,
 #backlight,
 #network,
 #pulseaudio,
-#tray {
+#tray,
+#custom-keyboard {
     padding: 0 10px;
     margin: 0 3px;
     /* border-right: 1px solid #fff; */

@@ -1,11 +1,5 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [
-    fzf
-    zoxide
-    fd
-    bat
-  ];
 
   programs.fish = {
     enable = true;
@@ -19,12 +13,19 @@
       }
     ];
   };
-  programs.bash.enable = true;
 
-  programs.fzf.enableFishIntegration = true;
-  programs.fzf.enableBashIntegration = true;
-  programs.zoxide.enableFishIntegration = true;
-  programs.zoxide.enableBashIntegration = true;
+  programs.fzf = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
+  programs.fd.enable = true;
+  programs.bat.enable = true;
 
   # Starship - an customizable prompt for any shell
   programs.starship = {

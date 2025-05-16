@@ -2,21 +2,20 @@
 {
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
-    gh
-    neofetch
-    just
+    gh # github
+    fastfetch # yes
+    just # like make
     zip
     unzip
     ripgrep
-    gnused
-    gnutar
-    glow
-    btop
+    gnused # sed
+    gnutar # tar
+    glow # MD render
+    btop # htop
     powertop
     lm_sensors # for `sensors` command
     pciutils # lspci
     usbutils # lsusb
-    sing-box
     ani-cli
   ];
 }
