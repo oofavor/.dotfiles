@@ -11,6 +11,7 @@ in
       nvim-treesitter.withAllGrammars
       blink-cmp
       telescope-fzf-native-nvim
+      go-nvim
     ];
     extraPackages = with pkgs; [
       # lua

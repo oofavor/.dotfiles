@@ -31,6 +31,8 @@ require('lazy').setup({
   require 'ofavor.plugins.obsidian',
   require 'ofavor.plugins.leetcode',
   require 'ofavor.plugins.tailwind',
+  require 'ofavor.plugins.golang',
+  require 'ofavor.plugins.harpoon',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
