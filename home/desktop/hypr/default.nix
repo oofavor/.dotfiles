@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 let
   backgroundPath = builtins.toString ../../../assets/background.jpg;
 in

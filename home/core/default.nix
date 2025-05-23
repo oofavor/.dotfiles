@@ -6,7 +6,6 @@
     ./tmux.nix
     ./utils.nix
     ./neovim
-    ./helix
     ./shell.nix
   ];
 

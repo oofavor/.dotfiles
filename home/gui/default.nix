@@ -14,10 +14,6 @@
     ./productivity
   ];
 
-  options = {
-    ofavor.games.enable = lib.mkEnableOption "Enable Games";
-  };
-
   config = {
     # WARN:
     # this is a DUMP!!!
