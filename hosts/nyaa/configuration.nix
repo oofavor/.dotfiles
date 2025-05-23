@@ -9,7 +9,6 @@
   imports = [
     ./hardware-configuration.nix
     ./../../modules/system.nix
-    ./../../modules/secureboot.nix
     ./../../modules/shell.nix
     ./../../modules/desktop.nix
     ./../../modules/nvidia.nix
@@ -22,7 +21,11 @@
   boot.blacklistedKernelModules = [ "snd_pcsp" ];
 
   # Bootloader.
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "nodev";
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.useOSProber = true;
 
   services.displayManager.ly.enable = true;
 
