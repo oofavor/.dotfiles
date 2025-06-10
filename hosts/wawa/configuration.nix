@@ -8,6 +8,7 @@
     ./../../modules/desktop.nix
     ./../../modules/amdpower.nix
     ./../../modules/fonts.nix
+    ./../../modules/greeter.nix
   ];
 
   networking.hostName = "wawa"; # Define your hostname.

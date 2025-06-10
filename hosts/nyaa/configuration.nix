@@ -15,6 +15,7 @@
     ./../../modules/nvidia.nix
     ./../../modules/fonts.nix
     ./../../modules/steam.nix
+    ./../../modules/greeter.nix
   ];
 
   networking.hostName = "nyaa"; # Define your hostname.
@@ -23,8 +24,6 @@
   boot.blacklistedKernelModules = [ "snd_pcsp" ];
 
   # Bootloader.
-
-  services.displayManager.ly.enable = true;
 
   programs.kdeconnect.enable = true;
 }
