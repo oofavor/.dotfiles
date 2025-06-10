@@ -14,6 +14,7 @@
     ./../../modules/desktop.nix
     ./../../modules/nvidia.nix
     ./../../modules/fonts.nix
+    ./../../modules/steam.nix
   ];
 
   networking.hostName = "nyaa"; # Define your hostname.
@@ -22,7 +23,6 @@
   boot.blacklistedKernelModules = [ "snd_pcsp" ];
 
   # Bootloader.
-  boot.loader.efi.canTouchEfiVariables = true;
 
   services.displayManager.ly.enable = true;
 

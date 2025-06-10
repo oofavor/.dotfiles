@@ -1,12 +1,18 @@
-vim.lsp.enable 'lua_ls'
-vim.lsp.enable 'ts_ls'
-vim.lsp.enable 'tailwindcss'
-vim.lsp.enable 'nil_ls'
-vim.lsp.enable 'cssls'
-vim.lsp.enable 'gopls'
-vim.lsp.enable 'markdown_oxide'
-vim.lsp.enable 'jsonls'
-vim.lsp.enable 'pyright'
+local lspservers = {
+  'lua_ls',
+  'ts_ls',
+  'tailwindcss',
+  'nil_ls',
+  'cssls',
+  'gopls',
+  'markdown_oxide',
+  'jsonls',
+  'pyright',
+}
+
+for _, lspname in pairs(lspservers) do
+  vim.lsp.enable(lspname)
+end
 
 return {
   -- Main LSP Configuration

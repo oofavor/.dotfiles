@@ -36,6 +36,13 @@
       # to have it up-to-date or simply don't specify the nixpkgs input
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+
+      # Optional but recommended to limit the size of your system closure.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # TODO: Improve whatever this is please
@@ -61,6 +68,7 @@
             system = "x86_64-linux";
             inherit specialArgs;
             modules = [
+              inputs.lanzaboote.nixosModules.lanzaboote
               ./hosts/nyaa/configuration.nix
               ./hosts/nyaa/hardware-configuration.nix
               home-manager.nixosModules.home-manager
