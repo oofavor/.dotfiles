@@ -8,4 +8,5 @@ return {
   opts = {
     -- configuration goes here
   },
+  cmd = 'Leet',
 }
