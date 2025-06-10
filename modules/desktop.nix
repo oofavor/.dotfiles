@@ -12,16 +12,11 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+    withUWSM = true;
   };
+
   services.hypridle.enable = true;
   programs.hyprlock.enable = true;
-
-  # # enable Sway window manager
-  # programs.sway = {
-  #   enable = true;
-  #   wrapperFeatures.gtk = true;
-  #   extraOptions = [ "--unsupported-gpu" ];
-  # };
 
   programs.thunar.enable = true;
   programs.waybar.enable = true;

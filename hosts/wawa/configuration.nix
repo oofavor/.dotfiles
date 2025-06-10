@@ -20,7 +20,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.efiSupport = true;
 
-  services.displayManager.ly.enable = true;
+  services.displayManager.cosmic-greeter.enable = true;
 
   systemd.sleep.extraConfig = ''
     HibernateDelaySec=1h

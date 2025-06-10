@@ -8,6 +8,7 @@ in
   services.hyprpaper = {
     enable = true;
     settings = {
+      ipc = "off";
       preload = [ backgroundPath ];
       wallpaper = [ ",${backgroundPath}" ];
     };
@@ -53,7 +54,9 @@ in
     enable = true;
     package = null;
     portalPackage = null;
+    systemd.enable = false;
 
     extraConfig = builtins.readFile ./config.conf;
   };
+
 }
