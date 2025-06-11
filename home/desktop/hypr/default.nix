@@ -1,54 +1,9 @@
-{ pkgs, ... }:
-let
-  backgroundPath = builtins.toString ../../../assets/background.jpg;
-in
+{ pkgs, inputs, ... }:
 {
-  home.packages = with pkgs; [ hyprpaper ];
-  # why the fuck services don't actually install hyprpaper
-  services.hyprpaper = {
-    enable = true;
-    settings = {
-      ipc = "off";
-      preload = [ backgroundPath ];
-      wallpaper = [ ",${backgroundPath}" ];
-    };
-  };
-
-  services.hypridle = {
-    enable = true;
-    settings = {
-      general = {
-        lock_cmd = "pidof hyprlock || hyprlock";
-        before_sleep_cmd = "loginctl lock-session"; # lock before suspend.
-        after_sleep_cmd = "hyprctl dispatch dpms on"; # to avoid having to press a key twice to turn on the display.
-      };
-
-      listener = [
-        {
-          timeout = 150; # 2.5min.
-          on-timeout = "brightnessctl -s set 10"; # set monitor backlight to minimum, avoid 0 on OLED monitor.
-          on-resume = "brightnessctl -r"; # monitor backlight restore.
-        }
-        # turn off keyboard backlight, comment out this section if you dont have a keyboard backlight.
-        {
-          timeout = 150; # 2.5min.;
-          on-timeout = "brightnessctl -sd rgb:kbd_backlight set 0"; # turn off keyboard backlight.
-          on-resume = "brightnessctl -rd rgb:kbd_backlight "; # turn on keyboard backlight.
-        }
-
-        {
-          timeout = 300; # 5min
-          on-timeout = "loginctl lock-session "; # lock screen when timeout has passed
-        }
-
-        {
-          timeout = 330; # 5.5min
-          on-timeout = " hyprctl dispatch dpms off "; # screen off when timeout has passed
-          on-resume = "hyprctl dispatch dpms on && brightnessctl -r"; # screen on when activity is detected after timeout has fired.
-        }
-      ];
-    };
-  };
+  imports = [
+    ./hypridle.nix
+    ./hyprpaper.nix
+  ];
 
   services.hyprpolkitagent.enable = true;
 
@@ -59,6 +14,9 @@ in
     systemd.enable = false;
 
     extraConfig = builtins.readFile ./config.conf;
-  };
 
+    plugins = [
+      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+    ];
+  };
 }
