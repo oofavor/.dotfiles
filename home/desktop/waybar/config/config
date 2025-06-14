@@ -1,9 +1,9 @@
 {
   "position": "bottom",
-  "height": 5,
-  "modules-left": ["hyprland/workspaces", "sway/workspaces"],
+  "height": 4,
+  "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["pulseaudio", "network", "backlight", "battery", "hyprland/language", "custom/keyboard", "tray"],
+  "modules-right": ["pulseaudio", "network", "backlight", "battery", "hyprland/language", "tray"],
   "hyprland/workspaces": {
   	"format": "{name}",
 	"format-icons": {
@@ -13,14 +13,6 @@
         "on-click": "activate",
 	"icon-size": 10,
 	"sort-by-number": true,
-  },
-  "hyprland/window": {
-    "format": "👉 {}",
-    "rewrite": {
-        "(.*) — Mozilla Firefox": "🌎 $1",
-        "(.*) - fish": "> [$1]"
-    },
-    "separate-outputs": true
   },
   "hyprland/language": {
 	  "format": "{short}"
@@ -51,7 +43,7 @@
 	  "format-icons": ["", "", "", "", ""]
   },
   "network": {
-	  "format-wifi": " ",
+	  "format-wifi": "{signalStrength}% ",
 	  "format-disconnected": "Disconnected",
 	  "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
 	  "on-click": "nm-applet"
@@ -71,14 +63,6 @@
 	  "scroll-step": 1,
 	  "on-click": "pwvucontrol",
 	  "ignored-sinks": ["Easy Effects Sink"]
-  },
-  "custom/keyboard": {
-    "on-click": "wvkbd-mobintl",
-    "on-click-right": "kill -9 $(pgrep wvkbd-mobintl)",
-    "format": "{icon}",
-    "format-icons": {
-      "default": "⌨️"
-    }
   }
 }
 

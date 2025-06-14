@@ -34,7 +34,6 @@ in
 
   programs.tmux = {
     enable = true;
-    # aggressiveResize = true; -- Disabled to be iTerm-friendly
     baseIndex = 1;
     newSession = true;
     # Stop tmux+escape craziness.
@@ -58,7 +57,9 @@ in
       }
       {
         plugin = resurrect;
-        extraConfig = '''';
+        extraConfig = ''
+          set -g @resurrect-strategy-nvim 'session'
+        '';
       }
       {
         plugin = continuum;
@@ -80,9 +81,6 @@ in
       set -g renumber-windows on
       set -g default-command "fish"
 
-      # easy-to-remember split pane commands
-      bind | split-window -h -c "#{pane_current_path}"
-      bind - split-window -v -c "#{pane_current_path}"
       bind c new-window -c "#{pane_current_path}"
 
       set -g default-terminal "xterm-256color"

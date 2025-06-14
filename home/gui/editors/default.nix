@@ -1,1 +1,6 @@
-{ imports = [ ./vscode.nix ]; }
+{
+  imports = [
+    ./vscode.nix
+    ./cursor.nix
+  ];
+}

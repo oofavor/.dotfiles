@@ -1,4 +1,6 @@
+{ pkgs, ... }:
 {
+  home.packages = with pkgs; [ lazygit ];
   # Basic configuration of git
   programs.git = {
     enable = true;
