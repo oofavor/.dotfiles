@@ -1,0 +1,56 @@
+{
+  pkgs,
+  config,
+  ...
+}:
+{
+  programs.niri.settings = {
+    outputs."eDP-1".scale = 2.0;
+    input = {
+      keyboard = {
+        xkb = {
+          layout = "us,ru";
+          options = "ctrl:nocaps,grp:alt_shift_toggle";
+        };
+
+      };
+      touchpad = {
+        tap = true;
+        natural-scroll = true;
+        accel-speed = -0.2;
+        scroll-factor = 0.6;
+      };
+    };
+
+    spawn-at-startup = [
+      { command = [ "astral" ]; }
+    ];
+
+    binds = with config.lib.niri.actions; {
+      "Mod+1".action = focus-workspace 1;
+      "Mod+2".action = focus-workspace 2;
+      "Mod+3".action = focus-workspace 3;
+
+      # TODO: uncomment when niri flake fixes this
+      # "Mod+Shift+1".action = move-column-to-workspace 1;
+      # "Mod+Shift+2".action = move-column-to-workspace 2;
+      # "Mod+Shift+3".action = move-column-to-workspace 3;
+      "Mod+Shift+1".action = spawn "niri" "msg" "action" "move-column-to-workspace" "1";
+      "Mod+Shift+2".action = spawn "niri" "msg" "action" "move-column-to-workspace" "2";
+      "Mod+Shift+3".action = spawn "niri" "msg" "action" "move-column-to-workspace" "3";
+
+      "Mod+h".action = focus-column-left;
+      "Mod+l".action = focus-column-right;
+      "Mod+Shift+h".action = move-column-left;
+      "Mod+Shift+l".action = move-column-right;
+
+      "Mod+minus".action = set-column-width "-10%";
+      "Mod+equal".action = set-column-width "+10%";
+
+      "Mod+r".action = spawn "rofi" "-show" "drun";
+      "Mod+q".action = spawn "ghostty";
+      "Mod+c".action = close-window;
+      "Mod+Shift+m".action = quit;
+    };
+  };
+}

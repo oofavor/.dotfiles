@@ -47,6 +47,31 @@
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
+
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    minimal-tmux = {
+      url = "github:niksingh710/minimal-tmux-status";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprpanel = {
+      url = "github:Jas-SinghFSU/HyprPanel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # TODO: Improve whatever this is please
@@ -55,6 +80,9 @@
       self,
       nixpkgs,
       home-manager,
+      stylix,
+      niri,
+      lanzaboote,
       ...
     }@inputs:
     {
@@ -72,7 +100,8 @@
             system = "x86_64-linux";
             inherit specialArgs;
             modules = [
-              inputs.lanzaboote.nixosModules.lanzaboote
+              lanzaboote.nixosModules.lanzaboote
+              stylix.nixosModules.stylix
               ./hosts/nyaa/configuration.nix
               ./hosts/nyaa/hardware-configuration.nix
               home-manager.nixosModules.home-manager
@@ -90,6 +119,8 @@
             system = "x86_64-linux";
             inherit specialArgs;
             modules = [
+              stylix.nixosModules.stylix
+              niri.nixosModules.niri
               ./hosts/wawa/configuration.nix
               ./hosts/wawa/hardware-configuration.nix
               home-manager.nixosModules.home-manager

@@ -4,10 +4,10 @@
     inputs.ucodenix.nixosModules.default
     ./hardware-configuration.nix
     ./../../modules/system.nix
+    ./../../modules/stylix.nix
     ./../../modules/shell.nix
     ./../../modules/desktop.nix
     ./../../modules/amdpower.nix
-    ./../../modules/fonts.nix
     ./../../modules/greeter.nix
   ];
 

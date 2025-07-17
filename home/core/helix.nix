@@ -4,7 +4,6 @@
     enable = true;
     package = pkgs.evil-helix;
     settings = {
-      theme = "autumn_night_transparent";
       editor.cursor-shape = {
         normal = "block";
         insert = "bar";
@@ -27,12 +26,5 @@
         language-servers = [ "lua-ls" ];
       }
     ];
-    themes = {
-      autumn_night_transparent = {
-        "inherits" = "autumn_night";
-        "ui.background" = { };
-      };
-    };
   };
-
 }

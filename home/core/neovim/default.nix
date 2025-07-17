@@ -5,6 +5,8 @@ in
 {
   xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink nvimPath;
 
+  stylix.targets.neovim.enable = false;
+
   programs.neovim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [
@@ -37,6 +39,7 @@ in
       #python
       pyright
       black
+
     ];
     defaultEditor = true;
   };

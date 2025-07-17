@@ -1,0 +1,23 @@
+* {
+    font-size: 0.8rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+#workspaces button.active {
+    font-weight: 900;
+}
+
+#language,
+#clock,
+#battery,
+#backlight,
+#network,
+#pulseaudio,
+#tray,
+#custom-keyboard {
+    padding: 0 6px;
+    margin: 0 6px;
+}

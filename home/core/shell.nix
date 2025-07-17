@@ -1,6 +1,10 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [ eza ];
+  home.packages = with pkgs; [
+    eza
+    tealdeer
+  ];
+
   programs.fish = {
     enable = true;
     interactiveShellInit = ''

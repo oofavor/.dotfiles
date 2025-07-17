@@ -8,6 +8,7 @@ local lspservers = {
   'markdown_oxide',
   'jsonls',
   'pyright',
+  'qmlls',
 }
 
 for _, lspname in pairs(lspservers) do

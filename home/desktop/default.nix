@@ -1,8 +1,9 @@
-{ ... }:
+{ pkgs, ... }:
 {
+
   imports = [
-    ./hypr
-    ./waybar
+    ./niri
+    # ./waybar
     ./rofi
   ];
 }

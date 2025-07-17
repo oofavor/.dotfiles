@@ -1,10 +1,5 @@
 { pkgs, config, ... }:
-let
-  waybarPath = "${config.home.homeDirectory}/.dotfiles/home/desktop/waybar/config";
-in
 {
-  xdg.configFile."waybar".source = config.lib.file.mkOutOfStoreSymlink waybarPath;
-
   home.packages = with pkgs; [
     networkmanagerapplet
     pwvucontrol
@@ -12,5 +7,9 @@ in
 
   programs.waybar = {
     enable = true;
+    style = builtins.readFile ./style.css;
+    settings = {
+      mainBar = ./config.nix;
+    };
   };
 }

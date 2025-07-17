@@ -30,6 +30,7 @@ end)
 
 -- Enable break indent
 vim.opt.breakindent = true
+vim.opt.tabstop = 4
 
 -- Save undo history
 vim.opt.undofile = true
