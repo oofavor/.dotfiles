@@ -3,6 +3,7 @@
   imports = [
     ./osu.nix
     ./prism.nix
+    ./lutris.nix
   ];
 
   options = {

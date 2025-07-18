@@ -72,6 +72,9 @@
       url = "github:Jas-SinghFSU/HyprPanel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    astal.url = "github:aylur/astal";
+    ags.url = "github:aylur/ags";
   };
 
   # TODO: Improve whatever this is please
@@ -102,6 +105,7 @@
             modules = [
               lanzaboote.nixosModules.lanzaboote
               stylix.nixosModules.stylix
+              niri.nixosModules.niri
               ./hosts/nyaa/configuration.nix
               ./hosts/nyaa/hardware-configuration.nix
               home-manager.nixosModules.home-manager
