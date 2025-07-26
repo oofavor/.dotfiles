@@ -13,5 +13,6 @@
         # List library dependencies here
       ];
     })
+    wineWowPackages.full
   ];
 }

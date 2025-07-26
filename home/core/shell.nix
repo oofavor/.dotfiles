@@ -16,6 +16,10 @@
         src = fzf-fish.src;
       }
     ];
+
+    shellAliases = {
+      cd = "z";
+    };
   };
 
   programs.fzf = {

@@ -28,8 +28,12 @@
       };
     };
 
+    environment = {
+      QT_QPA_PLATFORM = "wayland";
+      DISPLAY = ":0";
+    };
+
     spawn-at-startup = [
-      { command = [ "astral" ]; }
       { command = [ "xwayland-satellite" ]; }
     ];
 
