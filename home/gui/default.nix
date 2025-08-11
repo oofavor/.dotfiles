@@ -4,10 +4,10 @@
 }:
 {
   imports = [
-    ./clients
+    ./clients.nix
     ./games
-    ./editors
-    ./terminals
+    ./editors.nix
+    ./terminals.nix
   ];
 
   # WARN:

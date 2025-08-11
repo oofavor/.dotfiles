@@ -28,10 +28,10 @@
       };
     };
 
-    environment = {
-      QT_QPA_PLATFORM = "wayland";
-      DISPLAY = ":0";
-    };
+    # environment = {
+    #   QT_QPA_PLATFORM = "wayland";
+    #   DISPLAY = ":0";
+    # };
 
     spawn-at-startup = [
       { command = [ "xwayland-satellite" ]; }

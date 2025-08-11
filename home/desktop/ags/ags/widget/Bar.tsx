@@ -26,15 +26,8 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
         >
           <label label="Welcome to AGS!" />
         </button>
-        <slider
-          $type="center"
-          value={0.5}
-          min={0}
-          max={1}
-          onChangeValue={({ value }) => print(value)}
-        />
+        <box $type="center" />
         <menubutton $type="end" hexpand halign={Gtk.Align.CENTER}>
-
           <label label={time} />
           <popover>
             <Gtk.Calendar />

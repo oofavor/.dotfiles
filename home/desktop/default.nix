@@ -3,7 +3,6 @@
   imports = [
     ./niri
     ./ags
-    # ./waybar
     ./rofi
   ];
 }
