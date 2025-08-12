@@ -2,7 +2,7 @@
 {
   imports = [
     ./niri
-    ./ags
     ./rofi
+    ./notifications.nix
   ];
 }

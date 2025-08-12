@@ -10,7 +10,7 @@
     ./../../modules/system.nix
     ./../../modules/stylix.nix
     ./../../modules/shell.nix
-    ./../../modules/desktop.nix
+    ./../../modules/desktop
     ./../../modules/nvidia.nix
     ./../../modules/steam.nix
     ./../../modules/greeter.nix

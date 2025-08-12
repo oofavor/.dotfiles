@@ -28,13 +28,14 @@
       };
     };
 
-    # environment = {
-    #   QT_QPA_PLATFORM = "wayland";
-    #   DISPLAY = ":0";
-    # };
+    environment = {
+      QT_QPA_PLATFORM = "wayland";
+      DISPLAY = ":0";
+    };
 
     spawn-at-startup = [
       { command = [ "xwayland-satellite" ]; }
+      { command = [ "dunst" ]; }
     ];
 
     binds = with config.lib.niri.actions; {
@@ -62,7 +63,9 @@
       "Mod+s".action = maximize-column;
 
       "Mod+r".action = spawn "rofi" "-show" "drun";
+      "Mod+b".action = spawn "dunstctl" "history-pop";
       "Mod+q".action = spawn "ghostty";
+
       "Mod+c".action = close-window;
       "Mod+Shift+m".action = quit;
     };
