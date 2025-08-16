@@ -13,6 +13,10 @@
       refresh = 144.001;
     };
 
+    workspaces."terminal".name = "terminal";
+    workspaces."browser".name = "browser";
+    workspaces."misc".name = "misc";
+
     input = {
       keyboard = {
         xkb = {
@@ -39,18 +43,18 @@
     ];
 
     binds = with config.lib.niri.actions; {
-      "Mod+1".action = focus-workspace 1;
-      "Mod+2".action = focus-workspace 2;
-      "Mod+3".action = focus-workspace 3;
+      "Mod+1".action = focus-workspace "terminal";
+      "Mod+2".action = focus-workspace "browser";
+      "Mod+3".action = focus-workspace "misc";
 
       # TODO: uncomment when niri flake fixes this
       # "Mod+Shift+1".action = move-column-to-workspace 1;
       # "Mod+Shift+2".action = move-column-to-workspace 2;
       # "Mod+Shift+3".action = move-column-to-workspace 3;
 
-      "Mod+Shift+1".action = spawn "niri" "msg" "action" "move-column-to-workspace" "1";
-      "Mod+Shift+2".action = spawn "niri" "msg" "action" "move-column-to-workspace" "2";
-      "Mod+Shift+3".action = spawn "niri" "msg" "action" "move-column-to-workspace" "3";
+      "Mod+Shift+1".action = spawn "niri" "msg" "action" "move-column-to-workspace" "terminal";
+      "Mod+Shift+2".action = spawn "niri" "msg" "action" "move-column-to-workspace" "browser";
+      "Mod+Shift+3".action = spawn "niri" "msg" "action" "move-column-to-workspace" "misc";
 
       "Mod+h".action = focus-column-left;
       "Mod+l".action = focus-column-right;
