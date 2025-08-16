@@ -5,6 +5,11 @@
   ...
 }:
 {
+  imports = [
+    ./../hypr/hyprpaper.nix
+    ./../hypr/hypridle.nix
+  ];
+
   home.packages = with pkgs; [ xwayland-satellite ];
   programs.niri.settings = {
     outputs."PNP(AOC) 24G1WG4 0x00000E96".mode = {
@@ -13,9 +18,18 @@
       refresh = 144.001;
     };
 
-    workspaces."terminal".name = "terminal";
-    workspaces."browser".name = "browser";
-    workspaces."misc".name = "misc";
+    outputs."BOE 0x0AF2 Unknown" = {
+      scale = 2;
+      mode = {
+        width = 2560;
+        height = 1600;
+        refresh = 120.000;
+      };
+    };
+
+    workspaces."01".name = "terminal";
+    workspaces."02".name = "browser";
+    workspaces."03".name = "misc";
 
     input = {
       keyboard = {
@@ -39,6 +53,7 @@
 
     spawn-at-startup = [
       { command = [ "xwayland-satellite" ]; }
+      { command = [ "hyprpaper" ]; }
       { command = [ "dunst" ]; }
     ];
 

@@ -6,7 +6,7 @@
     ./../../modules/system.nix
     ./../../modules/stylix.nix
     ./../../modules/shell.nix
-    ./../../modules/desktop.nix
+    ./../../modules/desktop
     ./../../modules/amdpower.nix
     ./../../modules/greeter.nix
   ];
