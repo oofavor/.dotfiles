@@ -13,6 +13,6 @@
         # List library dependencies here
       ];
     })
-    wineWowPackages.full
+    wineWow64Packages.full
   ];
 }

@@ -11,7 +11,7 @@
     extraGroups = [
       "networkmanager"
       "wheel"
-      "hiddify"
+      "docker"
     ];
   };
 
@@ -64,7 +64,7 @@
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  networking.firewall.enable = false;
+  networking.firewall.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh = {
@@ -85,7 +85,12 @@
     sysstat
     lm_sensors
     yazi
+    bluez
+
+    networkmanagerapplet
   ];
+
+  hardware.bluetooth.enable = true;
 
   security.polkit.enable = true;
   services.gnome.gnome-keyring.enable = true;
@@ -133,4 +138,6 @@
     TERMINAL = "ghostty";
     NIXOS_OZONE_WL = "1";
   };
+
+  virtualisation.docker.enable = true;
 }

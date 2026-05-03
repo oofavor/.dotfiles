@@ -35,6 +35,15 @@
   programs.fd.enable = true;
   programs.bat.enable = true;
 
+  programs.atuin = {
+    enable = true;
+    enableFishIntegration = true;
+    settings = {
+      enter_accept = true;
+      style = "compact";
+    };
+  };
+
   # Starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;

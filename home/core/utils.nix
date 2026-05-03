@@ -17,5 +17,11 @@
     pciutils # lspci
     usbutils # lsusb
     ani-cli
+    jq           # JSON processing
+    hurl         # HTTP testing from terminal
+    delta        # syntax-highlighted git diffs
+    lazydocker   # Docker TUI
+    pgcli        # postgres client with autocomplete
+    redis        # redis-cli
   ];
 }

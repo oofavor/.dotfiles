@@ -4,8 +4,18 @@
   # Basic configuration of git
   programs.git = {
     enable = true;
-    userName = "oofavor";
-    userEmail = "favorxog@gmail.com";
+    settings.user.name = "oofavor";
+    settings.user.email = "favorxog@gmail.com";
+    signing.format = "openpgp";
+  };
+
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      navigate = true;
+      side-by-side = true;
+    };
   };
 
   # Github cli

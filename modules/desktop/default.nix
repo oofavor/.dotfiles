@@ -1,6 +1,12 @@
-{ pkgs, inputs, ... }:
 {
-  imports = [ ./niri.nix ];
+  pkgs,
+  ...
+}:
+{
+  imports = [
+    ./niri.nix
+    ./stylix.nix
+  ];
 
   environment.systemPackages = with pkgs; [
     grim # screenshot functionality
@@ -9,6 +15,6 @@
     cliphist
   ];
 
+  # file explorer
   programs.thunar.enable = true;
-  # programs.waybar.enable = true;
 }

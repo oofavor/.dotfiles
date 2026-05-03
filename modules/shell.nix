@@ -22,6 +22,10 @@
   environment.systemPackages = with pkgs; [
     man-pages
     man-pages-posix
+
+    libreoffice-qt
+    hunspell
+    hunspellDicts.ru_RU
   ];
 
   documentation.dev.enable = true;

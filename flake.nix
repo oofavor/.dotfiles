@@ -5,12 +5,10 @@
     extra-substituters = [
       "https://nix-community.cachix.org"
       "https://cache.nixos.org"
-      "https://hyprland.cachix.org"
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
   };
 
@@ -21,6 +19,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     cpu-microcodes = {
       url = "github:platomav/CPUMicrocodes/ec5200961ecdf78cf00e55d73902683e835edefd";
@@ -42,12 +42,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
-
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -62,22 +56,8 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    quickshell = {
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    hyprpanel = {
-      url = "github:Jas-SinghFSU/HyprPanel";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    astal.url = "github:aylur/astal";
-    ags.url = "github:aylur/ags";
   };
 
-  # TODO: Improve whatever this is please
   outputs =
     {
       self,
@@ -86,56 +66,56 @@
       stylix,
       niri,
       lanzaboote,
+      nixos-hardware,
       ...
     }@inputs:
-    {
-      nixosConfigurations =
-        let
-          username = "ofavor";
-          specialArgs = {
-            inherit username;
-            inherit inputs;
-          };
-        in
+    let
+      mkHost =
         {
-          # pc
-          nyaa = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            inherit specialArgs;
-            modules = [
-              lanzaboote.nixosModules.lanzaboote
-              stylix.nixosModules.stylix
-              niri.nixosModules.niri
-              ./hosts/nyaa/configuration.nix
-              ./hosts/nyaa/hardware-configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.users.ofavor = import ./hosts/nyaa/home.nix;
-                home-manager.extraSpecialArgs = specialArgs;
-              }
-            ];
+          hostname,
+          extraModules ? [ ],
+        }:
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs;
+            username = "ofavor";
           };
-
-          # Xiaomi laptop
-          wawa = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            inherit specialArgs;
-            modules = [
-              stylix.nixosModules.stylix
-              niri.nixosModules.niri
-              ./hosts/wawa/configuration.nix
-              ./hosts/wawa/hardware-configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.users.ofavor = import ./hosts/wawa/home.nix;
-                home-manager.extraSpecialArgs = specialArgs;
-              }
-            ];
-          };
+          modules = [
+            stylix.nixosModules.stylix
+            niri.nixosModules.niri
+            ./hosts/${hostname}/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.ofavor = import ./hosts/${hostname}/home.nix;
+              home-manager.extraSpecialArgs = {
+                inherit inputs;
+                username = "ofavor";
+              };
+            }
+          ]
+          ++ extraModules;
         };
+    in
+    {
+      nixosConfigurations = {
+        # Desktop PC
+        nyaa = mkHost {
+          hostname = "nyaa";
+          extraModules = [ lanzaboote.nixosModules.lanzaboote ];
+        };
+
+        # Xiaomi Redmi Book Pro 14 2022
+        wawa = mkHost {
+          hostname = "wawa";
+          extraModules = [
+            nixos-hardware.nixosModules.common-cpu-amd
+            nixos-hardware.nixosModules.common-pc-laptop
+            nixos-hardware.nixosModules.common-pc-laptop-ssd
+          ];
+        };
+      };
     };
 }

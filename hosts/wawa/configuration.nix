@@ -4,11 +4,11 @@
     inputs.ucodenix.nixosModules.default
     ./hardware-configuration.nix
     ./../../modules/system.nix
-    ./../../modules/stylix.nix
     ./../../modules/shell.nix
     ./../../modules/desktop
-    ./../../modules/amdpower.nix
+    ./../../modules/hardware/amdpower.nix
     ./../../modules/greeter.nix
+    ./../../modules/vpn.nix
   ];
 
   networking.hostName = "wawa"; # Define your hostname.
@@ -21,9 +21,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.efiSupport = true;
 
-  services.displayManager.cosmic-greeter.enable = true;
-
-  systemd.sleep.extraConfig = ''
-    HibernateDelaySec=1h
-  '';
+  systemd.sleep.settings.Sleep = {
+    HibernateDelaySec = "1h";
+  };
 }

@@ -1,22 +1,16 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-with lib;
+{ pkgs, ... }:
 {
   imports = [ ../../home ];
-
-  home.username = "ofavor";
-  home.homeDirectory = "/home/ofavor";
-
-  home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
     powertop
     brightnessctl
   ];
 
-  programs.home-manager.enable = true;
+  ofavor.desktop.enable = true;
+  ofavor.dev.langs = [
+    "rust"
+    "node"
+    "go"
+  ];
 }

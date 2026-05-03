@@ -6,12 +6,11 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./../../modules/secureboot.nix
+    ./../../modules/hardware/secureboot.nix
     ./../../modules/system.nix
-    ./../../modules/stylix.nix
     ./../../modules/shell.nix
     ./../../modules/desktop
-    ./../../modules/nvidia.nix
+    ./../../modules/hardware/nvidia.nix
     ./../../modules/steam.nix
     ./../../modules/greeter.nix
   ];

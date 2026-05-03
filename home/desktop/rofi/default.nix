@@ -1,10 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, lib, config, ... }:
 {
-  programs.rofi = {
-    enable = true;
-    package = pkgs.rofi-wayland;
-    plugins = with pkgs; [
-      (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; })
-    ];
+  config = lib.mkIf config.ofavor.desktop.enable {
+    programs.rofi = {
+      enable = true;
+      plugins = with pkgs; [
+        rofi-calc
+      ];
+    };
   };
 }
