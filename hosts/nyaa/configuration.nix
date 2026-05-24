@@ -7,12 +7,18 @@
   imports = [
     ./hardware-configuration.nix
     ./../../modules/hardware/secureboot.nix
-    ./../../modules/system.nix
-    ./../../modules/shell.nix
+    ./../../modules/core
+    ./../../modules/services/docker.nix
+    ./../../modules/services/gnome.nix
+    ./../../modules/services/keyd.nix
+    ./../../modules/services/printing.nix
+    ./../../modules/services/sound.nix
+    ./../../modules/hardware/bluetooth.nix
+    ./../../modules/programs/shell.nix
     ./../../modules/desktop
     ./../../modules/hardware/nvidia.nix
-    ./../../modules/steam.nix
-    ./../../modules/greeter.nix
+    ./../../modules/programs/steam.nix
+    ./../../modules/programs/greeter.nix
   ];
 
   networking.hostName = "nyaa"; # Define your hostname.

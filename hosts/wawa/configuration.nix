@@ -3,16 +3,22 @@
   imports = [
     inputs.ucodenix.nixosModules.default
     ./hardware-configuration.nix
-    ./../../modules/system.nix
-    ./../../modules/shell.nix
+    ./../../modules/core
+    ./../../modules/services/docker.nix
+    ./../../modules/services/gnome.nix
+    ./../../modules/services/keyd.nix
+    ./../../modules/services/printing.nix
+    ./../../modules/services/sound.nix
+    ./../../modules/hardware/bluetooth.nix
+    ./../../modules/programs/shell.nix
     ./../../modules/desktop
     ./../../modules/hardware/amdpower.nix
-    ./../../modules/greeter.nix
-    ./../../modules/vpn.nix
+    ./../../modules/programs/greeter.nix
+    ./../../modules/services/vpn.nix
   ];
 
   networking.hostName = "wawa"; # Define your hostname.
-  system.stateVersion = "26.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
   services.ucodenix.enable = true;
 
   # Bootloader.
