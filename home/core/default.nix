@@ -7,7 +7,6 @@
     ./shell.nix
   ];
 
-  home.stateVersion = "24.11";
-
+  home.stateVersion = "24.11"; # Did you read the comment?
   programs.home-manager.enable = true;
 }

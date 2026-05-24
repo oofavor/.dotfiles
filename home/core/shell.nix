@@ -5,6 +5,15 @@
     tealdeer
   ];
 
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    SUDO_EDITOR = "vim";
+    MANPAGER = "nvim -c '+Man!'";
+    TERMINAL = "ghostty";
+    NIXOS_OZONE_WL = "1";
+    PATH = "$HOME/.npm-global/bin:$PATH";
+  };
+
   programs.fish = {
     enable = true;
     interactiveShellInit = ''

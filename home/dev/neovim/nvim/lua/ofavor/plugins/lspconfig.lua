@@ -1,21 +1,3 @@
-local lspservers = {
-  'lua_ls',
-  'ts_ls',
-  'tailwindcss',
-  'nil_ls',
-  'cssls',
-  'gopls',
-  'markdown_oxide',
-  'jsonls',
-  'pyright',
-  'qmlls',
-  'prolog_ls',
-}
-
-for _, lspname in pairs(lspservers) do
-  vim.lsp.enable(lspname)
-end
-
 return {
   -- Main LSP Configuration
   'neovim/nvim-lspconfig',
@@ -183,5 +165,10 @@ return {
     vim.list_extend(ensure_installed, {
       'stylua', -- Used to format Lua code
     })
+
+    for server, config in pairs(servers) do
+      config.capabilities = vim.tbl_deep_extend('force', capabilities, config.capabilities or {})
+      require('lspconfig')[server].setup(config)
+    end
   end,
 }

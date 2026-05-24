@@ -12,7 +12,7 @@
   ];
 
   networking.hostName = "wawa"; # Define your hostname.
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "26.05"; # Did you read the comment?
   services.ucodenix.enable = true;
 
   # Bootloader.

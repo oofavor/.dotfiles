@@ -68,7 +68,6 @@ in
 
       environment = {
         QT_QPA_PLATFORM = "wayland";
-        DISPLAY = ":0";
       };
 
       spawn-at-startup = [
@@ -105,8 +104,8 @@ in
             lockCommand
           ];
         }
-        { command = [ "waybar" ]; }
         { command = [ "dunst" ]; }
+        { command = [ "waybar" ]; }
       ];
 
       binds = with config.lib.niri.actions; {

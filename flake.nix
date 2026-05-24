@@ -15,6 +15,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    vicinae.url = "github:vicinaehq/vicinae";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -56,6 +58,11 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    antigravity-nix = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -67,19 +74,21 @@
       niri,
       lanzaboote,
       nixos-hardware,
+      vicinae,
+      antigravity-nix,
       ...
     }@inputs:
     let
       mkHost =
         {
           hostname,
+          username ? "ofavor",
           extraModules ? [ ],
         }:
         nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
-            inherit inputs;
-            username = "ofavor";
+            inherit inputs username;
           };
           modules = [
             stylix.nixosModules.stylix
@@ -89,10 +98,10 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.ofavor = import ./hosts/${hostname}/home.nix;
+              home-manager.sharedModules = [ vicinae.homeManagerModules.default ];
+              home-manager.users.${username} = import ./hosts/${hostname}/home.nix;
               home-manager.extraSpecialArgs = {
-                inherit inputs;
-                username = "ofavor";
+                inherit inputs username;
               };
             }
           ]

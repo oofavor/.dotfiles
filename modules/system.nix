@@ -128,16 +128,5 @@
     udev.packages = with pkgs; [ gnome-settings-daemon ];
   };
 
-  environment.variables = {
-    EDITOR = "nvim";
-    SUDO_EDITOR = "vim";
-    MANPAGER = "nvim -c '+Man!'";
-  };
-
-  environment.sessionVariables = {
-    TERMINAL = "ghostty";
-    NIXOS_OZONE_WL = "1";
-  };
-
   virtualisation.docker.enable = true;
 }
