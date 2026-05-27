@@ -55,7 +55,7 @@
   srcOverride ? null,
 }: let
   pname = "google-antigravity";
-  version = "1.23.2-4781536860569600";
+  version = "2.0.0";
 
   isAarch64 = stdenv.hostPlatform.system == "aarch64-linux";
 
@@ -84,10 +84,7 @@
     if srcOverride != null
     then srcOverride
     else
-      fetchurl {
-        url = "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/${version}/linux-x64/Antigravity.tar.gz";
-        sha256 = "sha256-UjKkBI/0+hVoXZqYG6T7pXPil/PvybdvY455S693VyU=";
-      };
+      ../../Antigravity.tar.gz;
 
   # Create a browser wrapper
   # When useSystemChromeProfile is true (default), forces use of the user's
