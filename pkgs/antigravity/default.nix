@@ -272,8 +272,8 @@
 
       # Install icon from the app resources
       mkdir -p $out/share/pixmaps $out/share/icons/hicolor/1024x1024/apps
-      cp ${antigravity-unwrapped}/lib/antigravity/resources/app/resources/linux/code.png $out/share/pixmaps/antigravity.png
-      cp ${antigravity-unwrapped}/lib/antigravity/resources/app/resources/linux/code.png $out/share/icons/hicolor/1024x1024/apps/antigravity.png
+      # cp ${antigravity-unwrapped}/lib/antigravity/resources/app/resources/linux/code.png $out/share/pixmaps/antigravity.png
+      # cp ${antigravity-unwrapped}/lib/antigravity/resources/app/resources/linux/code.png $out/share/icons/hicolor/1024x1024/apps/antigravity.png
 
       runHook postInstall
     '';
@@ -348,8 +348,9 @@
 
       # Install icon from the app resources
       mkdir -p $out/share/pixmaps $out/share/icons/hicolor/1024x1024/apps
-      cp $out/lib/antigravity/resources/app/resources/linux/code.png $out/share/pixmaps/antigravity.png
-      cp $out/lib/antigravity/resources/app/resources/linux/code.png $out/share/icons/hicolor/1024x1024/apps/antigravity.png
+      # No icon bundled in v2.0
+      # cp $out/lib/antigravity/resources/app/resources/linux/code.png $out/share/pixmaps/antigravity.png
+      # cp $out/lib/antigravity/resources/app/resources/linux/code.png $out/share/icons/hicolor/1024x1024/apps/antigravity.png
 
       runHook postInstall
     '';
