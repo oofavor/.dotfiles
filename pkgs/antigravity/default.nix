@@ -342,7 +342,7 @@
       chmod +x $out/lib/antigravity/bin/antigravity-tunnel
 
       mkdir -p $out/bin
-      makeWrapper $out/lib/antigravity/bin/antigravity $out/bin/antigravity \
+      makeWrapper $out/lib/antigravity/antigravity $out/bin/antigravity \
         --set CHROME_BIN ${chrome-wrapper} \
         --set CHROME_PATH ${chrome-wrapper}
 
