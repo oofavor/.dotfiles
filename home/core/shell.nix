@@ -3,6 +3,7 @@
   home.packages = with pkgs; [
     eza
     tealdeer
+    (pkgs.callPackage ../../pkgs/antigravity-cli { })
   ];
 
   home.sessionVariables = {
