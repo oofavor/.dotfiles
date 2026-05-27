@@ -2,14 +2,13 @@
   pkgs,
   lib,
   config,
-  inputs,
   ...
 }:
 {
   config = lib.mkIf config.ofavor.desktop.enable {
     home.packages = with pkgs; [
       code-cursor-fhs
-      inputs.antigravity-nix.packages.${pkgs.system}.default
+      (pkgs.callPackage ../../pkgs/antigravity { })
     ];
     programs.vscode = {
       enable = true;

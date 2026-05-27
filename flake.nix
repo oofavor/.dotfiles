@@ -58,11 +58,6 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    antigravity-nix = {
-      url = "git+https://github.com/jacopone/antigravity-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -75,7 +70,6 @@
       lanzaboote,
       nixos-hardware,
       vicinae,
-      antigravity-nix,
       ...
     }@inputs:
     let
