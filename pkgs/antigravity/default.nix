@@ -194,12 +194,14 @@
     postPatch = ''
       packed="resources/app/node_modules.asar"
       unpacked="resources/app/node_modules"
-      asar extract "$packed" "$unpacked"
-      substituteInPlace $unpacked/@vscode/sudo-prompt/index.js \
-        --replace-fail "/usr/bin/pkexec" "/run/wrappers/bin/pkexec" \
-        --replace-fail "/bin/bash" "${bash}/bin/bash"
-      rm -rf "$packed"
-      ln -rs "$unpacked" "$packed"
+      if [ -f "$packed" ]; then
+        asar extract "$packed" "$unpacked"
+        substituteInPlace $unpacked/@vscode/sudo-prompt/index.js \
+          --replace-fail "/usr/bin/pkexec" "/run/wrappers/bin/pkexec" \
+          --replace-fail "/bin/bash" "${bash}/bin/bash"
+        rm -rf "$packed"
+        ln -rs "$unpacked" "$packed"
+      fi
     '';
 
     installPhase = ''
@@ -311,12 +313,14 @@
     postPatch = ''
       packed="resources/app/node_modules.asar"
       unpacked="resources/app/node_modules"
-      asar extract "$packed" "$unpacked"
-      substituteInPlace $unpacked/@vscode/sudo-prompt/index.js \
-        --replace-fail "/usr/bin/pkexec" "/run/wrappers/bin/pkexec" \
-        --replace-fail "/bin/bash" "${bash}/bin/bash"
-      rm -rf "$packed"
-      ln -rs "$unpacked" "$packed"
+      if [ -f "$packed" ]; then
+        asar extract "$packed" "$unpacked"
+        substituteInPlace $unpacked/@vscode/sudo-prompt/index.js \
+          --replace-fail "/usr/bin/pkexec" "/run/wrappers/bin/pkexec" \
+          --replace-fail "/bin/bash" "${bash}/bin/bash"
+        rm -rf "$packed"
+        ln -rs "$unpacked" "$packed"
+      fi
     '';
 
     desktopItems = [desktopItem];
