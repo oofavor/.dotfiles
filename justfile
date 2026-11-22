@@ -1,28 +1,40 @@
 default:
     @just --list
 
-# Rebuild and switch the current or given host
+# Rebuild and switch the current or given host (shows a package diff first)
 switch host=`hostname`:
-    sudo nixos-rebuild switch --flake .#{{host}}
+    nh os switch . -H {{host}}
 
 # Build and set as next boot without switching
 boot host=`hostname`:
-    sudo nixos-rebuild boot --flake .#{{host}}
+    nh os boot . -H {{host}}
 
-# Update all flake inputs
+# Show what switching would do without doing it
+dry host=`hostname`:
+    nh os switch . -H {{host}} --dry
+
+# Update all flake inputs and packages pinned outside the lock (scripts/update-*.sh)
 update:
     nix flake update
+    scripts/update-learnharness.sh
 
-# Evaluate both configs to catch nix errors without building
+# Evaluate the config to catch nix errors without building
 check:
-    nix eval .#nixosConfigurations.nyaa.config.system.build.toplevel.outPath
     nix eval .#nixosConfigurations.wawa.config.system.build.toplevel.outPath
 
-# Delete old nix generations and store paths
-gc:
-    sudo nix-collect-garbage -d
-    nix-collect-garbage -d
+# Format all nix files
+fmt:
+    nix fmt
 
-# Show what would be built before switching
-dry host=`hostname`:
-    sudo nixos-rebuild dry-activate --flake .#{{host}}
+# Lint nix files for antipatterns and dead code
+lint:
+    nix run nixpkgs#statix -- check .
+    nix run nixpkgs#deadnix -- --fail .
+
+# Delete old generations and store paths (keeps the last 5 and anything from the past week)
+gc:
+    nh clean all --keep 5 --keep-since 7d
+
+# Measure battery draw, wakeups and interrupts (run on battery, mostly idle)
+power seconds="30":
+    python3 scripts/powerstat.py {{seconds}}

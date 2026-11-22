@@ -1,31 +1,18 @@
 { pkgs, ... }:
 {
-  # Install fish as default shell
+  # Install fish as default shell. The prompt (starship) is configured in home-manager.
   programs.fish = {
     enable = true;
   };
 
-  # Starship - an customizable prompt for any shell
-  programs.starship = {
-    enable = true;
-    settings = {
-      add_newline = false;
-      aws.disabled = true;
-      gcloud.disabled = true;
-      line_break.disabled = true;
-    };
-    presets = [ "bracketed-segments" ];
-  };
-
   users.defaultUserShell = pkgs.fish;
+
+  # nix-index (home-manager) provides command-not-found for flakes.
+  programs.command-not-found.enable = false;
 
   environment.systemPackages = with pkgs; [
     man-pages
     man-pages-posix
-
-    libreoffice-qt
-    hunspell
-    hunspellDicts.ru_RU
   ];
 
   documentation.dev.enable = true;

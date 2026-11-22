@@ -1,8 +1,9 @@
 { ... }:
 {
   imports = [
+    ./claude.nix
     ./dev.nix
-    ./helix.nix
+    ./android.nix
     ./neovim
   ];
 }

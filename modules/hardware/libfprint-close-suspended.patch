@@ -1,0 +1,26 @@
+--- a/libfprint/fp-device.c
++++ b/libfprint/fp-device.c
+@@ -917,17 +917,22 @@
+ 
+   if (!priv->is_open)
+     {
+       g_task_return_error (task,
+                            fpi_device_error_new (FP_DEVICE_ERROR_NOT_OPEN));
+       return;
+     }
+ 
+-  if (priv->current_task || priv->is_suspended)
++  /* Closing is allowed while suspended. A suspend cancels a running verify of
++   * a device without suspend support, and the client then releases the device
++   * before the system sleeps. fprintd forgets its claim even when this fails,
++   * so refusing left the device open and every claim after the resume failed
++   * with "already open" until fprintd exited. */
++  if (priv->current_task)
+     {
+       g_task_return_error (task,
+                            fpi_device_error_new (FP_DEVICE_ERROR_BUSY));
+       return;
+     }
+ 
+   priv->current_action = FPI_DEVICE_ACTION_CLOSE;
+   priv->current_task = g_steal_pointer (&task);

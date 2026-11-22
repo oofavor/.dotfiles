@@ -1,0 +1,6 @@
+# `{ ... }:` module headers and splitting `programs.foo` / `programs.bar` across
+# a file are deliberate here.
+disabled = [
+  "empty_pattern",
+  "repeated_keys",
+]

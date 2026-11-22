@@ -2,20 +2,14 @@
   description = "I like descriptive descriptions";
 
   nixConfig = {
-    extra-substituters = [
-      "https://nix-community.cachix.org"
-      "https://cache.nixos.org"
-    ];
+    extra-substituters = [ "https://nix-community.cachix.org" ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     ];
   };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    vicinae.url = "github:vicinaehq/vicinae";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -39,11 +33,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.2";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -58,18 +47,36 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    antigravity-nix = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
-      self,
       nixpkgs,
       home-manager,
       stylix,
       niri,
-      lanzaboote,
       nixos-hardware,
-      vicinae,
+      nix-index-database,
       ...
     }@inputs:
     let
@@ -92,7 +99,9 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.sharedModules = [ vicinae.homeManagerModules.default ];
+              home-manager.sharedModules = [
+                nix-index-database.homeModules.nix-index
+              ];
               home-manager.users.${username} = import ./hosts/${hostname}/home.nix;
               home-manager.extraSpecialArgs = {
                 inherit inputs username;
@@ -103,13 +112,9 @@
         };
     in
     {
-      nixosConfigurations = {
-        # Desktop PC
-        nyaa = mkHost {
-          hostname = "nyaa";
-          extraModules = [ lanzaboote.nixosModules.lanzaboote ];
-        };
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
 
+      nixosConfigurations = {
         # Xiaomi Redmi Book Pro 14 2022
         wawa = mkHost {
           hostname = "wawa";

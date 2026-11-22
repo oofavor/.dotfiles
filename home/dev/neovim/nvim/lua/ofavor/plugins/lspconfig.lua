@@ -54,17 +54,12 @@ return {
         --  the definition of its *type*, not where it was *defined*.
         map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
-        -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
         ---@param client vim.lsp.Client
         ---@param method vim.lsp.protocol.Method
         ---@param bufnr? integer some lsp support methods only in specific files
         ---@return boolean
         local function client_supports_method(client, method, bufnr)
-          if vim.fn.has 'nvim-0.11' == 1 then
-            return client:supports_method(method, bufnr)
-          else
-            return client.supports_method(method, { bufnr = bufnr })
-          end
+          return client:supports_method(method, bufnr)
         end
 
         -- The following two autocommands are used to highlight references of the
@@ -141,15 +136,13 @@ return {
     --  By default, Neovim doesn't support everything that is in the LSP specification.
     --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
     --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-    local capabilities = require('blink.cmp').get_lsp_capabilities()
+    vim.lsp.config('*', {
+      capabilities = require('blink.cmp').get_lsp_capabilities(),
+    })
 
+    -- Server binaries come from Nix (programs.neovim.extraPackages); nvim-lspconfig only
+    -- supplies the default `lsp/<name>.lua` configs that these overrides merge into.
     local servers = {
-      -- clangd = {},
-      -- gopls = {},
-      -- pyright = {},
-      -- rust_analyzer = {},
-      ts_ls = {},
-
       lua_ls = {
         settings = {
           Lua = {
@@ -159,16 +152,27 @@ return {
           },
         },
       },
+      ts_ls = {},
+      html = {},
+      cssls = {},
+      jsonls = {},
+      tailwindcss = {},
+      nil_ls = {},
+      gopls = {}, -- go.nvim leaves gopls alone (lsp_cfg defaults to false)
+      pyright = {},
+      clangd = {},
+      markdown_oxide = {},
+      rust_analyzer = {},
+      zls = {},
     }
 
-    local ensure_installed = vim.tbl_keys(servers or {})
-    vim.list_extend(ensure_installed, {
-      'stylua', -- Used to format Lua code
-    })
-
-    for server, config in pairs(servers) do
-      config.capabilities = vim.tbl_deep_extend('force', capabilities, config.capabilities or {})
-      require('lspconfig')[server].setup(config)
+    for name, config in pairs(servers) do
+      vim.lsp.config(name, config)
+      -- Language toolchains are per host (ofavor.dev.langs), so skip servers Nix didn't install.
+      local cmd = vim.lsp.config[name].cmd
+      if type(cmd) ~= 'table' or vim.fn.executable(cmd[1]) == 1 then
+        vim.lsp.enable(name)
+      end
     end
   end,
 }

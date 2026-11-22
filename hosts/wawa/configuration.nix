@@ -13,7 +13,10 @@
     ./../../modules/programs/shell.nix
     ./../../modules/desktop
     ./../../modules/hardware/amdpower.nix
+    ./../../modules/hardware/rtw89.nix
+    ./../../modules/hardware/fingerprint.nix
     ./../../modules/programs/greeter.nix
+    ./../../modules/programs/office.nix
     ./../../modules/services/vpn.nix
   ];
 
@@ -26,7 +29,11 @@
   boot.loader.grub.device = "nodev";
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.efiSupport = true;
+  boot.loader.grub.configurationLimit = 10;
 
+  # Closing the lid suspends, then hibernates to the disk swap after an hour.
+  boot.resumeDevice = "/dev/disk/by-uuid/0c10a0bf-8f14-4150-a889-e033ff0a0b6c";
+  services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
   systemd.sleep.settings.Sleep = {
     HibernateDelaySec = "1h";
   };

@@ -1,0 +1,25 @@
+--- a/goodix_gm168.c
++++ b/goodix_gm168.c
+@@ -3241,8 +3241,10 @@
+    * false-reject rate on off-center touches roughly 2-3x vs the
+    * 12-stage default we had earlier.  libfprint's image-device
+    * default is 5, which doesn't give NBIS enough overlap on this
+-   * sensor.                                                              */
+-  dev_class->nr_enroll_stages = 16;
++   * sensor.
++   * SIGFM: a gallery of 20 touches missed 11 % of later touches, 30
++   * missed 7 %, so enrollment takes 30.                                  */
++  dev_class->nr_enroll_stages = 30;
+   /* libfprint's thermal model assumes a CMOS optical sensor that heats
+    * up under sustained use. Our sensor is capacitive — power draw is
+    * negligible and the silicon doesn't warm. The defaults trip after
+@@ -3258,4 +3260,9 @@
+   img_class->deactivate = dev_deactivate;
+   img_class->img_width = GM168_FRAME_W;
+   img_class->img_height = GM168_FRAME_H;
++  /* 80x64 frames hold 1-2 minutiae, too few for NBIS: match SIFT keypoints
++   * (SIGFM) of each enrolled touch instead. On 100 touches of this sensor,
++   * other fingers scored at most 3 while matching touches scored 0 (outside
++   * the enrolled area) or 90 and up. */
++  img_class->sigfm_threshold = 40;
+ }

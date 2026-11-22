@@ -1,0 +1,172 @@
+--- a/goodix_proto.h
++++ b/goodix_proto.h
+@@ -71,6 +71,10 @@
+ #define GOODIX_GM168_SEALED_PSK_LEN    324
+ #define GOODIX_GM168_SEALED_PSK_CHUNK  0x100
+ 
++/* SHA-256 of the PSK, tag 0xbb020001, 32 bytes, read via cmd 0xE4. */
++#define GOODIX_GM168_PSK_HASH_TAG      0xbb020001u
++#define GOODIX_GM168_PSK_HASH_LEN      32
++
+ // ─── Status codes ─────────────────────────────────────────────────────────────
+ #define GOODIX_GM168_STATUS_OK        0x00
+ #define GOODIX_GM168_STATUS_BUSY      0x01
+--- a/goodix_gm168.c
++++ b/goodix_gm168.c
+@@ -76,10 +76,16 @@
+     /* PSK bootstrap: if /etc/goodix-gm168/psk.bin (or $GOODIX_GM168_DIR/psk.bin)
+      * was not loaded at activate, walk cmd 0xE4 to dump the sealed blob from
+      * the MCU, save it, and fail SSM with instructions for the Windows
+-     * unseal step. Otherwise GATE jumps straight to INIT_TLS_START. */
++     * unseal step. Otherwise GATE jumps to INIT_PSK_HASH_SEND. */
+     INIT_PSK_GATE,
+     INIT_PSK_READ_SEND,
+     INIT_PSK_READ_RECV,
++    /* Read SHA-256(PSK) from the MCU before the handshake, as Windows does
++     * (PresetPskIsVaildG). After the sensor loses power (shutdown, not
++     * suspend) every handshake fails with "bad record mac" until this read
++     * has been done once; 0x60 does not clear that. Also checks psk.bin. */
++    INIT_PSK_HASH_SEND,
++    INIT_PSK_HASH_RECV,
+     INIT_TLS_START,
+     INIT_TLS_START_ACK,
+     INIT_TLS_RX,
+@@ -1406,6 +1412,98 @@
+         path, path));
+ }
+ 
++/* RX callback for INIT_PSK_HASH_RECV: finds the cmd 0xE4 reply the same way
++ * psk_read_rx_cb does and compares it with SHA-256(psk.bin). The read itself
++ * is what the sensor needs, so a missing or odd reply is only logged and the
++ * handshake attempted anyway. */
++static void
++psk_hash_rx_cb (FpiUsbTransfer *t, FpDevice *dev, gpointer ud, GError *error)
++{
++    (void)ud;
++    FpDeviceGoodixGm168 *self = FPI_DEVICE_GOODIX_GM168 (dev);
++
++    if (error) {
++        if (g_error_matches (error, G_USB_DEVICE_ERROR, G_USB_DEVICE_ERROR_TIMED_OUT)) {
++            fp_warn ("goodix-gm168: no reply to PSK hash read, trying TLS anyway");
++            GM168_LOG_WARN (&self->log, "PSK hash: no reply");
++            g_error_free (error);
++            self->ack_retry = 0;
++            fpi_ssm_next_state (t->ssm);
++            return;
++        }
++        fpi_ssm_mark_failed (t->ssm, error);
++        return;
++    }
++
++    /* Immediate ACK: its status byte is 0x03 rather than the usual 0x01 while
++     * the sensor is in the post-power-loss state. Worth having in the log. */
++    if (t->actual_length >= 9 &&
++        t->buffer[0] == GOODIX_GM168_PKT_CMD &&
++        t->buffer[4] == GOODIX_GM168_PKT_TLS &&
++        t->buffer[7] == GOODIX_GM168_CMD_SPEC_DATA)
++        GM168_LOG_INIT (&self->log, "PSK hash read, ack status 0x%02X", t->buffer[8]);
++
++    guint8  status = 0;
++    guint8 *extra = NULL;
++    guint16 extra_len = 0;
++    if (!find_a0_ack (t->buffer, t->actual_length, GOODIX_GM168_CMD_SPEC_DATA,
++                      &status, &extra, &extra_len)) {
++        if (self->deactivating) {
++            fpi_ssm_mark_failed (t->ssm, fpi_device_error_new_msg (
++                FP_DEVICE_ERROR_GENERAL, "psk_hash cancelled (deactivating)"));
++            return;
++        }
++        if (++self->ack_retry > GM168_USB_RX_RETRY_LIMIT) {
++            fpi_ssm_mark_failed (t->ssm, fpi_device_error_new_msg (
++                FP_DEVICE_ERROR_PROTO,
++                "cmd 0xE4 stuck: %d re-listens without E4 ack",
++                self->ack_retry));
++            return;
++        }
++        FpiUsbTransfer *next = fpi_usb_transfer_new (dev);
++        fpi_usb_transfer_fill_bulk (next, GOODIX_GM168_EP_IN,
++                                    GOODIX_GM168_EP_IN_SIZE);
++        next->ssm = t->ssm;
++        fpi_usb_transfer_submit (next, GM168_USB_RX_TIMEOUT_MS, self->io_cancellable, psk_hash_rx_cb, NULL);
++        return;
++    }
++    self->ack_retry = 0;
++
++    /* extra layout: [tag_echo:4 LE][data_len:4 LE][data:N] */
++    guint32 tag_echo = 0;
++    if (extra_len >= 8)
++        tag_echo = (guint32)extra[0]        |
++                   (guint32)extra[1] <<  8  |
++                   (guint32)extra[2] << 16  |
++                   (guint32)extra[3] << 24;
++    if (status != GOODIX_GM168_STATUS_OK ||
++        extra_len < 8 + GOODIX_GM168_PSK_HASH_LEN ||
++        tag_echo != GOODIX_GM168_PSK_HASH_TAG) {
++        fp_warn ("goodix-gm168: unexpected PSK hash reply (status=%02x extra_len=%u "
++                 "tag=%08x), trying TLS anyway", status, extra_len, tag_echo);
++        GM168_LOG_WARN (&self->log, "PSK hash: odd reply status=%02X len=%u",
++                        status, extra_len);
++        fpi_ssm_next_state (t->ssm);
++        return;
++    }
++
++    guint8 digest[GOODIX_GM168_PSK_HASH_LEN];
++    gsize  digest_len = sizeof (digest);
++    g_autoptr(GChecksum) sum = g_checksum_new (G_CHECKSUM_SHA256);
++    g_checksum_update (sum, goodix_gm168_psk, sizeof (goodix_gm168_psk));
++    g_checksum_get_digest (sum, digest, &digest_len);
++
++    if (memcmp (extra + 8, digest, sizeof (digest)) == 0) {
++        fp_dbg ("goodix-gm168: sensor PSK hash matches psk.bin");
++        GM168_LOG_INIT (&self->log, "PSK hash matches psk.bin");
++    } else {
++        fp_warn ("goodix-gm168: sensor PSK hash does not match psk.bin — was the "
++                 "sensor re-provisioned by Windows? The handshake will fail.");
++        GM168_LOG_ERR (&self->log, "PSK hash mismatch (sensor vs psk.bin)");
++    }
++    fpi_ssm_next_state (t->ssm);
++}
++
+ static void bg_rx_cb (FpiUsbTransfer *transfer, FpDevice *dev, gpointer user_data, GError *error);
+ 
+ static void
+@@ -1450,7 +1548,7 @@
+ 
+         case INIT_PSK_GATE:
+             if (self->psk_loaded) {
+-                fpi_ssm_jump_to_state (ssm, INIT_TLS_START);
++                fpi_ssm_jump_to_state (ssm, INIT_PSK_HASH_SEND);
+             } else {
+                 fp_warn ("goodix-gm168: psk.bin missing — reading sealed PSK from MCU");
+                 self->sealed_offset = 0;
+@@ -1490,6 +1588,30 @@
+             }
+             break;
+ 
++        case INIT_PSK_HASH_SEND:
++            {
++                /* Same body layout as INIT_PSK_READ_SEND, one 32-byte chunk. */
++                guint8 body[16] = {0};
++                body[0]  = GOODIX_GM168_PSK_HASH_LEN;
++                body[8]  = (GOODIX_GM168_PSK_HASH_TAG      ) & 0xFF;
++                body[9]  = (GOODIX_GM168_PSK_HASH_TAG >>  8) & 0xFF;
++                body[10] = (GOODIX_GM168_PSK_HASH_TAG >> 16) & 0xFF;
++                body[11] = (GOODIX_GM168_PSK_HASH_TAG >> 24) & 0xFF;
++                async_send_cmd (ssm, dev, GOODIX_GM168_CMD_SPEC_DATA,
++                                body, sizeof (body));
++            }
++            break;
++
++        case INIT_PSK_HASH_RECV:
++            {
++                FpiUsbTransfer *t = fpi_usb_transfer_new (dev);
++                fpi_usb_transfer_fill_bulk (t, GOODIX_GM168_EP_IN,
++                                            GOODIX_GM168_EP_IN_SIZE);
++                t->ssm = ssm;
++                fpi_usb_transfer_submit (t, GM168_USB_RX_TIMEOUT_MS, self->io_cancellable, psk_hash_rx_cb, NULL);
++            }
++            break;
++
+         case INIT_TLS_START:
+             {
+                 fp_dbg("INIT_TLS_START");

@@ -1,0 +1,61 @@
+--- a/goodix_gm168.c
++++ b/goodix_gm168.c
+@@ -22,6 +22,7 @@
+ #include "gm168_log.h"
+ 
+ #include <math.h>
++#include <time.h>
+ 
+ /* CLAHE tiling for 64x80 frames: 4x5 grid of 16x16 contextual regions.
+  * Clip limit is the max bin population (out of TILE_PX=256) before
+@@ -162,6 +163,8 @@
+      * still waiting for its verdict, see gm168_background_judge.           */
+     gint64   armed_us;
+     gboolean bg_pending;
++    /* gm168_suspended_us() at that moment. */
++    gint64   armed_suspended_us;
+ 
+     /* PSK bootstrap state, used only when psk.bin was missing at activate. */
+     gboolean psk_loaded;
+@@ -1944,6 +1947,17 @@
+ static void start_polling(FpDeviceGoodixGm168 *self);
+ static void start_capture_ssm(FpDeviceGoodixGm168 *self);
+ 
++/* Total time the system has spent suspended: CLOCK_BOOTTIME counts it,
++ * the monotonic clock does not. */
++static gint64
++gm168_suspended_us (void)
++{
++    struct timespec ts;
++
++    clock_gettime (CLOCK_BOOTTIME, &ts);
++    return (gint64) ts.tv_sec * G_USEC_PER_SEC + ts.tv_nsec / 1000 - g_get_monotonic_time ();
++}
++
+ /* Init takes the background frames on the assumption that the sensor is
+  * empty. If the finger is already on it (the reader starts as the lid opens
+  * or the lock screen appears, which is when it gets touched) they hold the
+@@ -2027,6 +2041,7 @@
+     }
+     self->log_stage_count = 0;
+     self->armed_us = g_get_monotonic_time ();
++    self->armed_suspended_us = gm168_suspended_us ();
+     self->bg_pending = TRUE;
+     fpi_image_device_activate_complete (img_dev, NULL);
+ 
+@@ -3235,8 +3250,13 @@
+      * If TLS is still alive AND the background is cached, skip init
+      * entirely. After the previous capture's REARM the sensor is in
+      * touch-wait state; change_state(AWAIT_FINGER_ON) will start polling
+-     * and we're ready immediately.                                       */
+-    if (self->tls.ssl != NULL && self->tls_done && self->background != NULL) {
++     * and we're ready immediately.
++     *
++     * Not after a system suspend: nothing says the sensor keeps its session
++     * and touch-wait state through one, and the background predates it. A
++     * full init is what a newly started fprintd does after every resume.  */
++    if (self->tls.ssl != NULL && self->tls_done && self->background != NULL &&
++        ABS (gm168_suspended_us () - self->armed_suspended_us) < G_USEC_PER_SEC) {
+         fp_dbg ("dev_activate: fast path — TLS+BG cached, skipping init");
+         self->log_stage_count = 0;
+         GM168_LOG_INIT (&self->log, "▶ fast path — TLS+BG cached");

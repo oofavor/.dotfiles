@@ -1,0 +1,40 @@
+name: update-flake-lock
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * 1" # Mondays
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/update-flake-lock@main
+        with:
+          pr-title: "chore: update flake.lock"
+          pr-labels: dependencies
+
+  # Packages pinned outside flake.lock (scripts/update-*.sh) get their own PR.
+  learnharness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - id: bump
+        run: scripts/update-learnharness.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: update/learnharness
+          commit-message: "chore(learnharness): update to ${{ steps.bump.outputs.version }}"
+          title: "chore: update learnharness to ${{ steps.bump.outputs.version }}"
+          body: "Release notes: https://github.com/amosblomqvist/learnharness/releases/tag/v${{ steps.bump.outputs.version }}"
+          labels: dependencies
+          delete-branch: true

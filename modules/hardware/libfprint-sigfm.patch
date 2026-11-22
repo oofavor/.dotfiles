@@ -1,0 +1,715 @@
+diff --git a/libfprint/fp-image-device.c b/libfprint/fp-image-device.c
+index ac88ffd..33a6d33 100644
+--- a/libfprint/fp-image-device.c
++++ b/libfprint/fp-image-device.c
+@@ -123,10 +123,13 @@ fp_image_device_start_capture_action (FpDevice *device)
+     {
+       FpPrint *enroll_print = NULL;
+ 
++      FpiPrintType wanted = FP_IMAGE_DEVICE_GET_CLASS (self)->sigfm_threshold > 0 ?
++                            FPI_PRINT_RAW : FPI_PRINT_NBIS;
++
+       fpi_device_get_enroll_data (device, &enroll_print);
+       g_object_get (enroll_print, "fpi-type", &print_type, NULL);
+-      if (print_type != FPI_PRINT_NBIS)
+-        fpi_print_set_type (enroll_print, FPI_PRINT_NBIS);
++      if (print_type != wanted)
++        fpi_print_set_type (enroll_print, wanted);
+     }
+ 
+   priv->enroll_stage = 0;
+diff --git a/libfprint/fpi-image-device.c b/libfprint/fpi-image-device.c
+index 87bdc60..b668856 100644
+--- a/libfprint/fpi-image-device.c
++++ b/libfprint/fpi-image-device.c
+@@ -23,6 +23,13 @@
+ #include "fp-image-device-private.h"
+ #include "fp-image-device.h"
+ 
++#include <config.h>
++
++#ifdef HAVE_SIGFM
++#include "fpi-image.h"
++#include "sigfm/sigfm.h"
++#endif
++
+ /**
+  * SECTION: fpi-image-device
+  * @title: Internal FpImageDevice
+@@ -238,6 +245,140 @@ fp_image_device_maybe_complete_action (FpImageDevice *self, GError *error)
+     }
+ }
+ 
++#ifdef HAVE_SIGFM
++/* SIGFM prints are FPI_PRINT_RAW holding an "aay": the SIGFM features of each
++ * touch (one for a scan, one per enroll stage for a template). The image is
++ * upscaled before SIFT, and touches with fewer keypoints are retried. */
++#define SIGFM_SCALE 2
++#define SIGFM_MIN_KEYPOINTS 30
++
++/* Same as the normalization done by a successful minutiae scan */
++static void
++sigfm_normalize_image (FpImage *image)
++{
++  gint w = image->width, h = image->height;
++  guint8 *d = image->data;
++
++  if (image->flags & FPI_IMAGE_H_FLIPPED)
++    for (gint y = 0; y < h; y++)
++      for (gint x = 0; x < w / 2; x++)
++        {
++          guint8 t = d[y * w + x];
++          d[y * w + x] = d[y * w + w - 1 - x];
++          d[y * w + w - 1 - x] = t;
++        }
++
++  if (image->flags & FPI_IMAGE_V_FLIPPED)
++    for (gint y = 0; y < h / 2; y++)
++      for (gint x = 0; x < w; x++)
++        {
++          guint8 t = d[y * w + x];
++          d[y * w + x] = d[(h - 1 - y) * w + x];
++          d[(h - 1 - y) * w + x] = t;
++        }
++
++  if (image->flags & FPI_IMAGE_COLORS_INVERTED)
++    for (gint i = 0; i < w * h; i++)
++      d[i] = 0xff - d[i];
++
++  image->flags &= ~(FPI_IMAGE_H_FLIPPED | FPI_IMAGE_V_FLIPPED | FPI_IMAGE_COLORS_INVERTED);
++}
++
++static gboolean
++fpi_print_add_from_image_sigfm (FpPrint *print, FpImage *image, GError **error)
++{
++  g_autoptr(SigfmInfo) info = NULL;
++  g_autoptr(GBytes) bytes = NULL;
++  GVariant *sample;
++
++  info = sigfm_extract (image->data, image->width, image->height, SIGFM_SCALE);
++  if (!info || sigfm_keypoints_count (info) < SIGFM_MIN_KEYPOINTS)
++    {
++      fp_dbg ("Too few SIGFM keypoints (%d)", info ? sigfm_keypoints_count (info) : -1);
++      g_propagate_error (error, fpi_device_retry_new (FP_DEVICE_RETRY_CENTER_FINGER));
++      return FALSE;
++    }
++
++  bytes = sigfm_serialize (info);
++  sample = g_variant_new_from_bytes (G_VARIANT_TYPE_BYTESTRING, bytes, TRUE);
++  fpi_print_set_type (print, FPI_PRINT_RAW);
++  g_object_set (print, "fpi-data",
++                g_variant_new_array (G_VARIANT_TYPE_BYTESTRING, &sample, 1), NULL);
++
++  return TRUE;
++}
++
++static void
++sigfm_add_samples (GVariantBuilder *builder, FpPrint *print)
++{
++  g_autoptr(GVariant) data = NULL;
++  GVariantIter iter;
++  GVariant *sample;
++
++  g_object_get (print, "fpi-data", &data, NULL);
++  if (!data || !g_variant_is_of_type (data, G_VARIANT_TYPE ("aay")))
++    return;
++
++  g_variant_iter_init (&iter, data);
++  while ((sample = g_variant_iter_next_value (&iter)))
++    {
++      g_variant_builder_add_value (builder, sample);
++      g_variant_unref (sample);
++    }
++}
++
++static void
++fpi_print_add_print_sigfm (FpPrint *print, FpPrint *add)
++{
++  GVariantBuilder builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE ("aay"));
++
++  sigfm_add_samples (&builder, print);
++  sigfm_add_samples (&builder, add);
++  g_object_set (print, "fpi-data", g_variant_builder_end (&builder), NULL);
++}
++
++/* Best score of @probe's first sample against every sample of @template */
++static gint
++sigfm_print_score (FpPrint *template, FpPrint *probe)
++{
++  g_autoptr(GVariant) probe_data = NULL;
++  g_autoptr(GVariant) data = NULL;
++  g_autoptr(GVariant) probe_sample = NULL;
++  g_autoptr(GBytes) probe_bytes = NULL;
++  g_autoptr(SigfmInfo) probe_info = NULL;
++  FpiPrintType type;
++  GVariantIter iter;
++  GVariant *sample;
++  gint best = 0;
++
++  g_object_get (template, "fpi-type", &type, "fpi-data", &data, NULL);
++  g_object_get (probe, "fpi-data", &probe_data, NULL);
++  if (type != FPI_PRINT_RAW || !data || !g_variant_is_of_type (data, G_VARIANT_TYPE ("aay")))
++    return 0;
++
++  probe_sample = g_variant_get_child_value (probe_data, 0);
++  probe_bytes = g_variant_get_data_as_bytes (probe_sample);
++  probe_info = sigfm_deserialize (probe_bytes);
++  if (!probe_info)
++    return 0;
++
++  g_variant_iter_init (&iter, data);
++  while ((sample = g_variant_iter_next_value (&iter)))
++    {
++      g_autoptr(GBytes) bytes = g_variant_get_data_as_bytes (sample);
++      g_autoptr(SigfmInfo) info = sigfm_deserialize (bytes);
++
++      if (info)
++        best = MAX (best, sigfm_match_score (probe_info, info));
++      else
++        fp_warn ("Skipping a damaged SIGFM sample");
++      g_variant_unref (sample);
++    }
++
++  return best;
++}
++#endif
++
+ static void
+ fpi_image_device_minutiae_detected (GObject *source_object, GAsyncResult *res, gpointer user_data)
+ {
+@@ -245,9 +386,11 @@ fpi_image_device_minutiae_detected (GObject *source_object, GAsyncResult *res, g
+   g_autoptr(FpPrint) print = NULL;
+   GError *error = NULL;
+   FpImageDevice *self = FP_IMAGE_DEVICE (user_data);
++  FpImageDeviceClass *cls = FP_IMAGE_DEVICE_GET_CLASS (self);
+   FpDevice *device = FP_DEVICE (self);
+   FpImageDevicePrivate *priv;
+   FpiDeviceAction action;
++  gboolean added;
+ 
+   /* Note: We rely on the device to not disappear during an operation. */
+   priv = fp_image_device_get_instance_private (FP_IMAGE_DEVICE (device));
+@@ -263,11 +406,24 @@ fpi_image_device_minutiae_detected (GObject *source_object, GAsyncResult *res, g
+           return;
+         }
+ 
+-      /* Replace error with a retry condition. */
+-      g_warning ("Failed to detect minutiae: %s", error->message);
+-      g_clear_pointer (&error, g_error_free);
++#ifdef HAVE_SIGFM
++      /* SIGFM needs no minutiae (small sensors often have none), only the
++       * normalization that the failed scan skipped. */
++      if (cls->sigfm_threshold > 0)
++        {
++          fp_dbg ("Minutiae detection failed, not needed for SIGFM: %s", error->message);
++          g_clear_pointer (&error, g_error_free);
++          sigfm_normalize_image (image);
++        }
++      else
++#endif
++        {
++          /* Replace error with a retry condition. */
++          g_warning ("Failed to detect minutiae: %s", error->message);
++          g_clear_pointer (&error, g_error_free);
+ 
+-      error = fpi_device_retry_new_msg (FP_DEVICE_RETRY_GENERAL, "Minutiae detection failed, please retry");
++          error = fpi_device_retry_new_msg (FP_DEVICE_RETRY_GENERAL, "Minutiae detection failed, please retry");
++        }
+     }
+ 
+   action = fpi_device_get_current_action (device);
+@@ -282,8 +438,18 @@ fpi_image_device_minutiae_detected (GObject *source_object, GAsyncResult *res, g
+   if (!error)
+     {
+       print = fp_print_new (device);
+-      fpi_print_set_type (print, FPI_PRINT_NBIS);
+-      if (!fpi_print_add_from_image (print, image, &error))
++#ifdef HAVE_SIGFM
++      if (cls->sigfm_threshold > 0)
++        {
++          added = fpi_print_add_from_image_sigfm (print, image, &error);
++        }
++      else
++#endif
++        {
++          fpi_print_set_type (print, FPI_PRINT_NBIS);
++          added = fpi_print_add_from_image (print, image, &error);
++        }
++      if (!added)
+         {
+           g_clear_object (&print);
+ 
+@@ -304,6 +470,11 @@ fpi_image_device_minutiae_detected (GObject *source_object, GAsyncResult *res, g
+ 
+       if (print)
+         {
++#ifdef HAVE_SIGFM
++          if (cls->sigfm_threshold > 0)
++            fpi_print_add_print_sigfm (enroll_print, print);
++          else
++#endif
+           fpi_print_add_print (enroll_print, print);
+           priv->enroll_stage += 1;
+         }
+@@ -329,6 +500,33 @@ fpi_image_device_minutiae_detected (GObject *source_object, GAsyncResult *res, g
+       FpPrint *result = NULL;
+ 
+       fpi_device_get_identify_data (device, &templates);
++#ifdef HAVE_SIGFM
++      if (cls->sigfm_threshold > 0)
++        {
++          gint best = 0;
++
++          for (i = 0; !error && i < templates->len; i++)
++            {
++              FpPrint *template = g_ptr_array_index (templates, i);
++              gint score = sigfm_print_score (template, print);
++
++              /* Journal-visible, next to the driver's quality-gate line. */
++              g_message ("SIGFM score %d against print %d (threshold %d)",
++                         score, i, cls->sigfm_threshold);
++              if (score >= cls->sigfm_threshold && score > best)
++                {
++                  result = template;
++                  best = score;
++                }
++            }
++
++          /* libfprint expects a matching non-NBIS scan to equal a gallery
++           * print (as for match-on-chip devices), so it is not reported. */
++          if (result)
++            g_clear_object (&print);
++        }
++      else
++#endif
+       for (i = 0; !error && i < templates->len; i++)
+         {
+           FpPrint *template = g_ptr_array_index (templates, i);
+diff --git a/libfprint/fpi-image-device.h b/libfprint/fpi-image-device.h
+index 71472db..753e625 100644
+--- a/libfprint/fpi-image-device.h
++++ b/libfprint/fpi-image-device.h
+@@ -73,6 +73,9 @@ typedef enum {
+ /**
+  * FpImageDeviceClass:
+  * @bz3_threshold: Threshold to consider bozorth3 score a match, default: 40
++ * @sigfm_threshold: If set, match with SIGFM instead of NBIS (for sensors too
++ *   small to hold enough minutiae) and consider this score a match. Needs the
++ *   sigfm helper.
+  * @img_width: Width of the image, only provide if constant
+  * @img_height: Height of the image, only provide if constant
+  * @img_open: Open the device and do basic initialization
+@@ -105,6 +108,7 @@ struct _FpImageDeviceClass
+   FpDeviceClass parent_class;
+ 
+   gint          bz3_threshold;
++  gint          sigfm_threshold;
+   gint          img_width;
+   gint          img_height;
+ 
+diff --git a/libfprint/meson.build b/libfprint/meson.build
+index fb48858..8ba668e 100644
+--- a/libfprint/meson.build
++++ b/libfprint/meson.build
+@@ -27,6 +27,10 @@ libfprint_private_sources = [
+     'fpi-usb-transfer.c',
+ ] + spi_sources
+ 
++if libfprint_conf.get('HAVE_SIGFM', 0) == 1
++    libfprint_private_sources += 'sigfm/sigfm.cpp'
++endif
++
+ libfprint_public_headers = [
+     'fp-context.h',
+     'fp-device.h',
+@@ -153,6 +157,7 @@ helper_sources = {
+     'aes3k': files('drivers/aes3k.c'),
+     'openssl': files(),
+     'pixman': files(),
++    'sigfm': files(),
+     'udev': files(),
+     'virtual': files('drivers/virtual-device-listener.c'),
+ }
+diff --git a/libfprint/sigfm/sigfm.cpp b/libfprint/sigfm/sigfm.cpp
+new file mode 100644
+index 0000000..4e08c17
+--- /dev/null
++++ b/libfprint/sigfm/sigfm.cpp
+@@ -0,0 +1,283 @@
++/*
++ * SIGFM: SIFT-based matcher for small fingerprint sensors
++ * Copyright (C) 2022 Natasha England-Elbro, Alexander Meiler (original)
++ * Copyright (C) 2026 danieledisint <93646388+danieledisint@users.noreply.github.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
++ */
++
++/*
++ * SIFT keypoints are matched with Lowe's ratio test; the score counts pairs
++ * of matched keypoint pairs whose relative rotation agrees, which rejects
++ * matches that are not consistent with a single rigid transform.
++ */
++
++#include "sigfm.h"
++
++#include <cmath>
++#include <algorithm>
++#include <cstring>
++#include <memory>
++#include <set>
++#include <tuple>
++#include <vector>
++
++#include <opencv2/core.hpp>
++#include <opencv2/imgproc.hpp>
++#if __has_include(<opencv2/features.hpp>)
++#include <opencv2/features.hpp>
++#else
++#include <opencv2/features2d.hpp>
++#endif
++
++namespace {
++
++constexpr double distance_match = 0.75;
++constexpr double length_match = 0.05;
++constexpr double angle_match = 0.05;
++constexpr std::size_t min_match = 5;
++/* The geometric check below grows with the fourth power of the matches;
++ * only the most distinctive ones are used to keep a comparison fast. */
++constexpr std::size_t max_match = 100;
++constexpr guint32 format_magic = 0x31464753; /* "SGF1" */
++constexpr int descriptor_size = 128;
++constexpr gsize record_size = 2 * sizeof (float) + descriptor_size;
++/* Far above what SIFT finds on an upscaled 64x80 image; bounds the work a
++ * damaged or crafted print can cause. */
++constexpr guint32 max_keypoints = 4096;
++constexpr float max_coordinate = 65536;
++
++using Point = std::pair<int, int>;
++using Match = std::pair<Point, Point>;
++
++struct Angle
++{
++  double cos;
++  double sin;
++};
++
++bool
++ratio_close (double a, double b, double tolerance)
++{
++  double hi = std::max (a, b);
++
++  return hi > 0 && 1 - std::min (a, b) / hi <= tolerance;
++}
++
++} // namespace
++
++struct _SigfmInfo
++{
++  std::vector<cv::KeyPoint> keypoints;
++  cv::Mat                   descriptors;
++};
++
++SigfmInfo *
++sigfm_extract (const guint8 *pixels, int width, int height, int scale)
++{
++  try
++    {
++      cv::Mat img (height, width, CV_8UC1, const_cast<guint8 *> (pixels));
++      cv::Mat scaled;
++      auto info = std::make_unique<SigfmInfo> ();
++
++      if (scale > 1)
++        cv::resize (img, scaled, cv::Size (), scale, scale, cv::INTER_CUBIC);
++      else
++        scaled = img.clone ();
++
++      /* Keep the strongest keypoints that sigfm_deserialize() accepts */
++      cv::SIFT::create (max_keypoints)->detectAndCompute (scaled, cv::noArray (),
++                                                          info->keypoints, info->descriptors);
++      /* nfeatures keeps ties at the cut-off response */
++      if (info->keypoints.size () > max_keypoints)
++        {
++          info->keypoints.resize (max_keypoints);
++          info->descriptors = info->descriptors.rowRange (0, max_keypoints).clone ();
++        }
++      return info.release ();
++    }
++  catch (const cv::Exception &e)
++    {
++      g_warning ("SIFT extraction failed: %s", e.what ());
++      return nullptr;
++    }
++}
++
++int
++sigfm_keypoints_count (const SigfmInfo *info)
++{
++  return info->keypoints.size ();
++}
++
++/* Layout (little endian): magic, count, then per keypoint x, y as float32,
++ * then count * 128 descriptor bytes. OpenCV SIFT descriptors are integral
++ * values in 0..255, so the byte encoding is lossless. */
++GBytes *
++sigfm_serialize (const SigfmInfo *info)
++{
++  guint32 count = info->keypoints.size ();
++  GByteArray *out = g_byte_array_new ();
++  guint32 header[2] = { GUINT32_TO_LE (format_magic), GUINT32_TO_LE (count) };
++
++  g_byte_array_append (out, reinterpret_cast<guint8 *> (header), sizeof (header));
++
++  for (const auto &kp : info->keypoints)
++    {
++      float xy[2] = { kp.pt.x, kp.pt.y };
++      g_byte_array_append (out, reinterpret_cast<guint8 *> (xy), sizeof (xy));
++    }
++
++  for (guint32 i = 0; i < count; i++)
++    {
++      guint8 row[descriptor_size];
++      for (int j = 0; j < descriptor_size; j++)
++        row[j] = cv::saturate_cast<guint8> (info->descriptors.at<float> (i, j));
++      g_byte_array_append (out, row, sizeof (row));
++    }
++
++  return g_byte_array_free_to_bytes (out);
++}
++
++/* Prints come from storage, so everything is validated before use. */
++SigfmInfo *
++sigfm_deserialize (GBytes *data)
++{
++  gsize len;
++  const guint8 *p = static_cast<const guint8 *> (g_bytes_get_data (data, &len));
++  guint32 header[2];
++  guint32 count;
++
++  if (len < sizeof (header))
++    return nullptr;
++
++  memcpy (header, p, sizeof (header));
++  count = GUINT32_FROM_LE (header[1]);
++  if (GUINT32_FROM_LE (header[0]) != format_magic || count > max_keypoints ||
++      (len - sizeof (header)) / record_size != count ||
++      (len - sizeof (header)) % record_size != 0)
++    return nullptr;
++
++  try
++    {
++      auto info = std::make_unique<SigfmInfo> ();
++      p += sizeof (header);
++      info->keypoints.reserve (count);
++      for (guint32 i = 0; i < count; i++, p += 2 * sizeof (float))
++        {
++          float xy[2];
++          memcpy (xy, p, sizeof (xy));
++          /* The matcher casts coordinates to int */
++          if (!(xy[0] >= 0 && xy[0] < max_coordinate &&
++                xy[1] >= 0 && xy[1] < max_coordinate))
++            return nullptr;
++          info->keypoints.emplace_back (xy[0], xy[1], 1.0f);
++        }
++
++      info->descriptors.create (count, descriptor_size, CV_32F);
++      for (guint32 i = 0; i < count; i++)
++        for (int j = 0; j < descriptor_size; j++)
++          info->descriptors.at<float> (i, j) = *p++;
++
++      return info.release ();
++    }
++  catch (const std::exception &e)
++    {
++      g_warning ("Failed to load SIGFM features: %s", e.what ());
++      return nullptr;
++    }
++}
++
++int
++sigfm_match_score (const SigfmInfo *probe, const SigfmInfo *enrolled)
++{
++  try
++    {
++      std::vector<std::vector<cv::DMatch>> knn;
++      std::vector<std::pair<double, Match>> candidates;
++      std::set<Match> unique;
++
++      if (probe->keypoints.size () < 2 || enrolled->keypoints.size () < 2)
++        return 0;
++
++      cv::BFMatcher::create ()->knnMatch (probe->descriptors,
++                                          enrolled->descriptors, knn, 2);
++      for (const auto &pair : knn)
++        {
++          if (pair.size () < 2 || pair[0].distance >= distance_match * pair[1].distance)
++            continue;
++
++          const auto &p1 = probe->keypoints[pair[0].queryIdx].pt;
++          const auto &p2 = enrolled->keypoints[pair[0].trainIdx].pt;
++          candidates.emplace_back (pair[0].distance / pair[1].distance,
++                                   Match (Point ((int) p1.x, (int) p1.y),
++                                          Point ((int) p2.x, (int) p2.y)));
++        }
++
++      std::sort (candidates.begin (), candidates.end ());
++      for (const auto &[ratio, match] : candidates)
++        {
++          if (unique.size () >= max_match)
++            break;
++          unique.insert (match);
++        }
++
++      if (unique.size () < min_match)
++        return 0;
++
++      std::vector<Match> matches (unique.begin (), unique.end ());
++      std::vector<Angle> angles;
++      for (std::size_t j = 0; j < matches.size (); j++)
++        for (std::size_t k = j + 1; k < matches.size (); k++)
++          {
++            const auto &[a1, b1] = matches[j];
++            const auto &[a2, b2] = matches[k];
++            double v1x = a1.first - a2.first, v1y = a1.second - a2.second;
++            double v2x = b1.first - b2.first, v2y = b1.second - b2.second;
++            double l1 = std::hypot (v1x, v1y), l2 = std::hypot (v2x, v2y);
++
++            if (l1 == 0 || l2 == 0 || !ratio_close (l1, l2, length_match))
++              continue;
++
++            double product = l1 * l2;
++            double s = std::clamp ((v1x * v2x + v1y * v2y) / product, -1.0, 1.0);
++            double c = std::clamp ((v1x * v2y - v1y * v2x) / product, -1.0, 1.0);
++            angles.push_back ({ M_PI / 2 + std::asin (s), std::acos (c) });
++          }
++
++      if (angles.size () < min_match)
++        return 0;
++
++      int count = 0;
++      for (std::size_t j = 0; j < angles.size (); j++)
++        for (std::size_t k = j + 1; k < angles.size (); k++)
++          if (ratio_close (angles[j].sin, angles[k].sin, angle_match) &&
++              ratio_close (angles[j].cos, angles[k].cos, angle_match))
++            count++;
++
++      return count;
++    }
++  catch (const cv::Exception &e)
++    {
++      g_warning ("SIGFM matching failed: %s", e.what ());
++      return 0;
++    }
++}
++
++void
++sigfm_free (SigfmInfo *info)
++{
++  delete info;
++}
+diff --git a/libfprint/sigfm/sigfm.h b/libfprint/sigfm/sigfm.h
+new file mode 100644
+index 0000000..d0f6340
+--- /dev/null
++++ b/libfprint/sigfm/sigfm.h
+@@ -0,0 +1,49 @@
++/*
++ * SIGFM: SIFT-based matcher for small fingerprint sensors
++ * Copyright (C) 2022 Natasha England-Elbro, Alexander Meiler (original)
++ * Copyright (C) 2026 danieledisint <93646388+danieledisint@users.noreply.github.com>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
++ */
++
++#pragma once
++
++#include <glib.h>
++
++G_BEGIN_DECLS
++
++typedef struct _SigfmInfo SigfmInfo;
++
++/* Extracts SIFT features from an 8-bit grayscale image, upscaled by @scale */
++SigfmInfo *sigfm_extract (const guint8 *pixels,
++                          int           width,
++                          int           height,
++                          int           scale);
++
++int        sigfm_keypoints_count (const SigfmInfo *info);
++
++GBytes    *sigfm_serialize (const SigfmInfo *info);
++
++SigfmInfo *sigfm_deserialize (GBytes *data);
++
++/* Number of geometrically consistent match pairs; 0 means no match */
++int        sigfm_match_score (const SigfmInfo *probe,
++                              const SigfmInfo *enrolled);
++
++void       sigfm_free (SigfmInfo *info);
++
++G_DEFINE_AUTOPTR_CLEANUP_FUNC (SigfmInfo, sigfm_free)
++
++G_END_DECLS
+diff --git a/meson.build b/meson.build
+index fe14ba0..28d989c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -141,7 +141,7 @@ drivers_info = {
+     'upeksonly': {},
+     'upekts': {},
+     'goodixmoc': {},
+-    'goodix_gm168': { 'endian_dependent': true, 'helper': ['openssl'] },
++    'goodix_gm168': { 'endian_dependent': true, 'helper': ['openssl', 'sigfm'] },
+     'nb1010': {},
+     'fpcmoc': {},
+     'realtek': {},
+@@ -244,6 +244,25 @@ foreach i : driver_helpers
+         endif
+ 
+         optional_deps += openssl_dep
++    elif i == 'sigfm'
++        # SIGFM matcher (libfprint/sigfm) for image devices too small for NBIS.
++        # Only the needed OpenCV modules are linked: the pkg-config file lists
++        # every module and would leak them into the GIR scanner link.
++        opencv_pc = dependency('opencv4', version: '>= 4.5', required: false)
++        if not opencv_pc.found()
++            error('OpenCV is required for @0@'.format(driver))
++        endif
++        opencv_libdir = opencv_pc.get_variable(pkgconfig: 'libdir')
++        optional_deps += declare_dependency(
++            compile_args: ['-I' + opencv_pc.get_variable(pkgconfig: 'includedir')],
++            dependencies: [
++                cpp.find_library('opencv_core', dirs: opencv_libdir),
++                cpp.find_library('opencv_imgproc', dirs: opencv_libdir),
++                cpp.find_library('opencv_flann', dirs: opencv_libdir),
++                cpp.find_library('opencv_features2d', dirs: opencv_libdir),
++            ])
++
++        libfprint_conf.set10('HAVE_SIGFM', true)
+     elif i == 'udev'
+         install_udev_rules = true
+ 

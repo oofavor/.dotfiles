@@ -1,12 +1,27 @@
-{ pkgs, ... }:
+{ ... }:
 {
-  home.packages = with pkgs; [ lazygit ];
   # Basic configuration of git
   programs.git = {
     enable = true;
-    settings.user.name = "oofavor";
-    settings.user.email = "favorxog@gmail.com";
-    signing.format = "openpgp";
+    settings = {
+      user.name = "oofavor";
+      user.email = "favorxog@gmail.com";
+
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+      rebase.autoStash = true;
+      rerere.enabled = true;
+      merge.conflictStyle = "zdiff3";
+      diff.algorithm = "histogram";
+      fetch.prune = true;
+    };
+    ignores = [
+      ".direnv/"
+      "result"
+      "result-*"
+      "**/.claude/settings.local.json"
+    ];
   };
 
   programs.delta = {

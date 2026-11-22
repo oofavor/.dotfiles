@@ -1,0 +1,110 @@
+--- a/goodix_gm168.c
++++ b/goodix_gm168.c
+@@ -158,6 +158,10 @@
+      * GM168_FRAME_PIXELS, freed once `background` is computed.            */
+     guint32 *background_sum;
+     int      bg_frames_captured;
++    /* When init armed the sensor (monotonic), and whether `background` is
++     * still waiting for its verdict, see gm168_background_judge.           */
++    gint64   armed_us;
++    gboolean bg_pending;
+ 
+     /* PSK bootstrap state, used only when psk.bin was missing at activate. */
+     gboolean psk_loaded;
+@@ -1940,6 +1944,63 @@
+ static void start_polling(FpDeviceGoodixGm168 *self);
+ static void start_capture_ssm(FpDeviceGoodixGm168 *self);
+ 
++/* Init takes the background frames on the assumption that the sensor is
++ * empty. If the finger is already on it (the reader starts as the lid opens
++ * or the lock screen appears, which is when it gets touched) they hold the
++ * finger instead, and every image until fprintd exits is a ghost that passes
++ * the quality gate and matches nothing.
++ *
++ * A finger that was there during init fires the touch event as soon as
++ * polling starts (60 ms after arming in the logs, against 400 ms and up for
++ * a finger arriving at an empty sensor). So the first touch decides: early,
++ * and the last good background, kept in $GM168_STATE_DIR, replaces this one;
++ * late or never, and this one is good and becomes the kept one.
++ *
++ * @touched: called for a touch event rather than at deactivate.            */
++#define GM168_BG_SETTLE_US (500 * G_TIME_SPAN_MILLISECOND)
++
++static void
++gm168_background_judge (FpDeviceGoodixGm168 *self, gboolean touched)
++{
++    const gsize size = GM168_FRAME_PIXELS * sizeof (guint16);
++    const char *dir = g_getenv ("GM168_STATE_DIR");
++    g_autofree char *path = NULL;
++    g_autofree gchar *saved = NULL;
++    gsize len = 0;
++
++    if (!self->bg_pending || !self->background)
++        return;
++
++    if (dir && *dir)
++        path = g_build_filename (dir, "background.bin", NULL);
++
++    if (g_get_monotonic_time () - self->armed_us >= GM168_BG_SETTLE_US) {
++        g_autoptr(GError) err = NULL;
++
++        self->bg_pending = FALSE;
++        if (path && !g_file_set_contents (path, (const gchar *) self->background,
++                                          (gssize) size, &err))
++            fp_warn ("background: cannot save %s: %s", path, err->message);
++        return;
++    }
++
++    /* Deactivated before a finger on the sensor would have shown up. */
++    if (!touched)
++        return;
++
++    self->bg_pending = FALSE;
++    if (path && g_file_get_contents (path, &saved, &len, NULL) && len == size) {
++        fp_warn ("background: finger was on the sensor during init, using the saved one");
++        GM168_LOG_WARN (&self->log, "BG taken with a finger on the sensor, using the saved one");
++        g_free (self->background);
++        self->background = (guint16 *) g_steal_pointer (&saved);
++    } else {
++        fp_warn ("background: finger was on the sensor during init and none is saved, "
++                 "touches will not match until fprintd restarts");
++        GM168_LOG_WARN (&self->log, "BG taken with a finger on the sensor, none saved");
++    }
++}
++
+ 
+ static void
+ init_completed (FpiSsm *ssm, FpDevice *dev, GError *error)
+@@ -1965,6 +2026,8 @@
+         GM168_LOG_INIT (&self->log, "✓ armed  (%.0f ms)", ms);
+     }
+     self->log_stage_count = 0;
++    self->armed_us = g_get_monotonic_time ();
++    self->bg_pending = TRUE;
+     fpi_image_device_activate_complete (img_dev, NULL);
+ 
+     // We do NOT start polling for touch here.
+@@ -2557,6 +2620,7 @@
+             goodix_gm168_is_touch_event (buf, transfer->actual_length)) {
+             fp_dbg ("*** Touch Detected (A0 echo=0x32 status=0x02) ***");
+             gm168_log_touch_divider (&self->log);
++            gm168_background_judge (self, TRUE);
+             /* Fresh touch → reset quality-gate state. Previous best (if
+              * any leaked through e.g. a deactivate mid-retry) is freed. */
+             if (self->best_img) {
+@@ -3186,6 +3250,7 @@
+     self->tls_retry          = 0;
+     self->bg_frames_captured = 0;
+     self->psk_loaded         = gm168_load_psk_from_file ();
++    self->bg_pending         = FALSE;
+     g_clear_pointer (&self->background_sum, g_free);
+     g_clear_pointer (&self->background, g_free);
+ 
+@@ -3233,6 +3298,7 @@
+ {
+     FpDeviceGoodixGm168 *self = FPI_DEVICE_GOODIX_GM168 (dev);
+     self->deactivating = TRUE;
++    gm168_background_judge (self, FALSE);
+ 
+     /* Free any quality-gate state that survived the session — prevents
+      * us from submitting a stale image on the next activate.  Mirrors
