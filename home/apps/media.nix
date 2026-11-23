@@ -31,5 +31,6 @@
     };
 
     programs.yt-dlp.enable = true;
+    programs.obs-studio.enable = true;
   };
 }

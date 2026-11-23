@@ -76,7 +76,6 @@ in
           "x-scheme-handler/tg" = "org.telegram.desktop.desktop";
           "x-scheme-handler/tonsite" = "org.telegram.desktop.desktop";
           "x-scheme-handler/discord" = "vesktop.desktop";
-          "x-scheme-handler/throne" = "throne-url-handler.desktop";
           "x-scheme-handler/antigravity" = "antigravity.desktop";
           "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
         };

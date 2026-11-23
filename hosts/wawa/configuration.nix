@@ -17,7 +17,7 @@
     ./../../modules/hardware/fingerprint.nix
     ./../../modules/programs/greeter.nix
     ./../../modules/programs/office.nix
-    ./../../modules/services/vpn.nix
+    ./../../private/vpn.nix
   ];
 
   networking.hostName = "wawa"; # Define your hostname.

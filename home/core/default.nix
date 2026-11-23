@@ -2,7 +2,6 @@
 {
   imports = [
     ./git.nix
-    ./isp-proxy.nix
     ./tmux.nix
     ./utils.nix
     ./shell.nix

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(/private)",
+      "Read(/private/**)",
+      "Read(./private)",
+      "Read(./private/**)"
+    ]
+  }
+}

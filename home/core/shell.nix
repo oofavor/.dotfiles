@@ -9,7 +9,10 @@ in
     MANPAGER = "nvim -c '+Man!'";
     NIXOS_OZONE_WL = "1";
   };
-  home.sessionPath = [ "$HOME/.npm-global/bin" ];
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "$HOME/.npm-global/bin"
+  ];
 
   programs.fish = {
     enable = true;

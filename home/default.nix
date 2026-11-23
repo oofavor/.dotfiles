@@ -24,7 +24,7 @@
 
     games.enable = lib.mkEnableOption "gaming packages";
 
-    dev.android.enable = lib.mkEnableOption "Android SDK, NDK, emulator and JDK for React Native and Rust";
+    dev.android.enable = lib.mkEnableOption "Android SDK, NDK, emulator and JDK";
 
     dev.langs = lib.mkOption {
       type = lib.types.listOf (

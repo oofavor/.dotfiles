@@ -26,10 +26,13 @@
 
   # sched_ext scheduler that packs light work onto fewer cores. --autopower reads
   # the EPP TLP sets: powersave mode on battery, balanced on AC.
-  services.scx = {
+  services.scx-loader = {
     enable = true;
-    scheduler = "scx_lavd";
-    extraArgs = [ "--autopower" ];
+    config = {
+      default_sched = "scx_lavd";
+      default_mode = "Auto";
+      scheds.scx_lavd.auto_mode = [ "--autopower" ];
+    };
   };
 
   services.tlp = {
